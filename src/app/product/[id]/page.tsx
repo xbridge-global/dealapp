@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase'
-
+import WatchlistButton from '@/components/WatchlistButton'
 async function getProduct(id: string) {
   const { data } = await supabase
     .from('deals')
@@ -86,14 +86,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         </div>
       </div>
 
-      <div style={{ margin: '0 16px 12px', backgroundColor: '#fff', borderRadius: '16px', padding: '14px', border: '0.5px solid #e5e4e0' }}>
-        <div style={{ fontSize: '13px', fontWeight: '700', color: '#111', marginBottom: '8px' }}>Cài thông báo giảm giá</div>
-        <div style={{ fontSize: '12px', color: '#666', lineHeight: '1.5', marginBottom: '12px' }}>DealApp sẽ thông báo ngay khi giá đạt mức bạn mong muốn.</div>
-        <div style={{ backgroundColor: '#FFF3F0', borderRadius: '10px', padding: '10px 14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span>🔔</span>
-          <span style={{ fontSize: '12px', color: '#FF4500', fontWeight: '600' }}>Đăng nhập để theo dõi giá</span>
-        </div>
-      </div>
+      <WatchlistButton productId={product?.id} />
 
       <div style={{ padding: '0 16px 24px' }}>
         <a href={product?.affiliate_url || product?.product_url || '#'} target="_blank" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', backgroundColor: '#FF4500', borderRadius: '14px', padding: '16px', textDecoration: 'none' }}>
