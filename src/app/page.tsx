@@ -1,9 +1,20 @@
 import { supabase } from '@/lib/supabase'
 
+function getEmoji(name: string) {
+  if (name?.includes('Samsung') || name?.includes('iPhone') || name?.includes('Xiaomi Redmi')) return '📱'
+  if (name?.includes('Laptop') || name?.includes('Bàn phím')) return '💻'
+  if (name?.includes('Tai nghe') || name?.includes('AirPods') || name?.includes('Sony WH')) return '🎧'
+  if (name?.includes('Nike')) return '👟'
+  if (name?.includes('Watch')) return '⌚'
+  if (name?.includes('Kem')) return '🧴'
+  if (name?.includes('Máy lọc')) return '💨'
+  return '🛍️'
+}
+
 async function getDeals() {
   const { data } = await supabase
     .from('deals')
-    .select(`*, products (*)`)
+    .select('*, products (*)')
     .eq('is_active', true)
   return data || []
 }
@@ -51,7 +62,7 @@ export default async function Home() {
           {deals.map((deal: any) => (
             <a key={deal.id} href={'/product/' + deal.product_id} style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '14px', border: '0.5px solid #e5e4e0', display: 'flex', gap: '12px', alignItems: 'center', textDecoration: 'none' }}>
               <div style={{ width: '70px', height: '70px', backgroundColor: '#f2f1ed', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px', flexShrink: 0 }}>
-                {deal.products?.platform === 'Shopee' ? '📱' : deal.products?.platform === 'Lazada' ? '🎧' : '👟'}
+                {getEmoji(deal.products?.name)}
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: '12px', fontWeight: '700', color: '#111', marginBottom: '3px', lineHeight: '1.3' }}>{deal.products?.name}</div>

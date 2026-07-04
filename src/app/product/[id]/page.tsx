@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import WatchlistButton from '@/components/WatchlistButton'
+
 async function getProduct(id: string) {
   const { data } = await supabase
     .from('deals')
@@ -16,6 +17,17 @@ async function getPriceHistory(id: string) {
     .eq('product_id', id)
     .order('recorded_at', { ascending: true })
   return data || []
+}
+
+function getEmoji(name: string) {
+  if (name?.includes('Samsung') || name?.includes('iPhone') || name?.includes('Xiaomi Redmi')) return '📱'
+  if (name?.includes('Laptop') || name?.includes('Bàn phím')) return '💻'
+  if (name?.includes('Tai nghe') || name?.includes('AirPods') || name?.includes('Sony WH')) return '🎧'
+  if (name?.includes('Nike')) return '👟'
+  if (name?.includes('Watch')) return '⌚'
+  if (name?.includes('Kem')) return '🧴'
+  if (name?.includes('Máy lọc')) return '💨'
+  return '🛍️'
 }
 
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
@@ -40,7 +52,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
 
       <div style={{ margin: '0 16px 12px', backgroundColor: '#fff', borderRadius: '16px', border: '0.5px solid #e5e4e0', overflow: 'hidden' }}>
         <div style={{ height: '200px', backgroundColor: '#f2f1ed', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '80px' }}>
-          {product?.platform === 'Shopee' ? '📱' : product?.platform === 'Lazada' ? '🎧' : '👟'}
+          {getEmoji(product?.name)}
         </div>
         <div style={{ padding: '14px 16px' }}>
           <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
@@ -71,20 +83,22 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         ))}
       </div>
 
-      <div style={{ margin: '0 16px 12px', backgroundColor: '#fff', borderRadius: '16px', padding: '14px', border: '0.5px solid #e5e4e0' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-          <span style={{ fontSize: '13px', fontWeight: '700', color: '#111' }}>Lịch sử giá</span>
-          <span style={{ fontSize: '11px', color: '#FF4500' }}>3 tháng</span>
+      {history.length > 0 && (
+        <div style={{ margin: '0 16px 12px', backgroundColor: '#fff', borderRadius: '16px', padding: '14px', border: '0.5px solid #e5e4e0' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+            <span style={{ fontSize: '13px', fontWeight: '700', color: '#111' }}>Lịch sử giá</span>
+            <span style={{ fontSize: '11px', color: '#FF4500' }}>3 tháng</span>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            {history.slice().reverse().map((h: any, i: number) => (
+              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '0.5px solid #f0efe9' }}>
+                <span style={{ fontSize: '11px', color: '#999' }}>{new Date(h.recorded_at).toLocaleDateString('vi-VN')}</span>
+                <span style={{ fontSize: '12px', fontWeight: '600', color: '#111' }}>{h.price.toLocaleString('vi-VN')}đ</span>
+              </div>
+            ))}
+          </div>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-          {history.slice().reverse().map((h: any, i: number) => (
-            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '0.5px solid #f0efe9' }}>
-              <span style={{ fontSize: '11px', color: '#999' }}>{new Date(h.recorded_at).toLocaleDateString('vi-VN')}</span>
-              <span style={{ fontSize: '12px', fontWeight: '600', color: '#111' }}>{h.price.toLocaleString('vi-VN')}đ</span>
-            </div>
-          ))}
-        </div>
-      </div>
+      )}
 
       <WatchlistButton productId={product?.id} />
 
