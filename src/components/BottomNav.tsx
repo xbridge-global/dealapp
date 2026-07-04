@@ -8,7 +8,7 @@ export default function BottomNav() {
   const items = [
     { href: '/', icon: '🏠', label: 'Trang chủ' },
     { href: '/alerts', icon: '🔔', label: 'Alert' },
-    { href: '/login', icon: '👤', label: 'Tài khoản' },
+    { href: '/account', icon: '👤', label: 'Tài khoản' },
   ]
 
   return (
