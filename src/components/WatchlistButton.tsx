@@ -67,7 +67,7 @@ export default function WatchlistButton({ productId }: { productId: string }) {
             value={targetPrice}
             onChange={e => setTargetPrice(e.target.value)}
             placeholder="VD: 7000000"
-            style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '0.5px solid #e5e4e0', fontSize: '14px', backgroundColor: '#f7f6f2', boxSizing: 'border-box', marginBottom: '10px', outline: 'none' }}
+            style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '0.5px solid #e5e4e0', fontSize: '14px', backgroundColor: '#f7f6f2', boxSizing: 'border-box', marginBottom: '10px', outline: 'none', color: '#111' }}
           />
           <div style={{ display: 'flex', gap: '8px' }}>
             <button onClick={saveWatch} disabled={loading} style={{ flex: 1, backgroundColor: '#FF4500', color: '#fff', border: 'none', borderRadius: '10px', padding: '11px', fontSize: '13px', fontWeight: '700', cursor: 'pointer' }}>
