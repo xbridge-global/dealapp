@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 
 export default function CommunityPage() {
   const [posts, setPosts] = useState<any[]>([])
+  const [leaders, setLeaders] = useState<any[]>([])
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
@@ -16,6 +17,7 @@ export default function CommunityPage() {
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user))
     loadPosts()
+    loadLeaders()
   }, [])
 
   async function loadPosts() {
@@ -24,6 +26,11 @@ export default function CommunityPage() {
       .order('vote_count', { ascending: false })
     setPosts(data || [])
     setLoading(false)
+  }
+
+  async function loadLeaders() {
+    const { data } = await supabase.from('leaderboard').select('*')
+    setLeaders(data || [])
   }
 
   async function handlePost() {
@@ -40,6 +47,7 @@ export default function CommunityPage() {
     setForm({ title: '', description: '', product_url: '', platform: 'Shopee', original_price: '', deal_price: '' })
     setShowForm(false)
     loadPosts()
+    loadLeaders()
   }
 
   async function handleVote(postId: string) {
@@ -54,12 +62,14 @@ export default function CommunityPage() {
       await supabase.from('posts').update({ vote_count: (posts.find(p => p.id === postId)?.vote_count || 0) + 1 }).eq('id', postId)
     }
     loadPosts()
+    loadLeaders()
   }
 
   const inp = { width: '100%', padding: '10px 12px', borderRadius: '10px', border: '0.5px solid #e5e4e0', fontSize: '13px', backgroundColor: '#f7f6f2', boxSizing: 'border-box' as const, outline: 'none', color: '#111', fontFamily: 'sans-serif', marginBottom: '10px' }
 
   return (
     <main style={{ backgroundColor: '#f7f6f2', minHeight: '100vh', fontFamily: 'sans-serif' }}>
+
       <div style={{ padding: '16px 20px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span style={{ fontSize: '16px', fontWeight: '800', color: '#111' }}>Cộng đồng</span>
         <button onClick={() => setShowForm(!showForm)} style={{ backgroundColor: '#FF4500', color: '#fff', border: 'none', borderRadius: '20px', padding: '7px 16px', fontSize: '12px', fontWeight: '700', cursor: 'pointer' }}>+ Đăng deal</button>
@@ -82,6 +92,22 @@ export default function CommunityPage() {
             <button onClick={handlePost} style={{ flex: 1, backgroundColor: '#FF4500', color: '#fff', border: 'none', borderRadius: '10px', padding: '11px', fontSize: '13px', fontWeight: '700', cursor: 'pointer' }}>Đăng ngay</button>
             <button onClick={() => setShowForm(false)} style={{ flex: 1, backgroundColor: '#f2f1ed', color: '#666', border: 'none', borderRadius: '10px', padding: '11px', fontSize: '13px', fontWeight: '700', cursor: 'pointer' }}>Hủy</button>
           </div>
+        </div>
+      )}
+
+      {leaders.length > 0 && (
+        <div style={{ margin: '0 16px 14px', backgroundColor: '#111', borderRadius: '16px', padding: '12px 14px' }}>
+          <div style={{ fontSize: '9px', color: '#FF4500', fontWeight: '700', letterSpacing: '.06em', marginBottom: '10px' }}>TOP DEAL HUNTERS TUẦN NÀY</div>
+          {leaders.slice(0, 3).map((leader: any, i: number) => (
+            <div key={leader.user_id} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+              <span style={{ fontSize: '16px' }}>{i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉'}</span>
+              <div style={{ width: '28px', height: '28px', backgroundColor: i === 0 ? '#FF4500' : '#444', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: '700', color: '#fff' }}>
+                {leader.email?.[0].toUpperCase()}
+              </div>
+              <span style={{ fontSize: '11px', color: '#ccc', flex: 1 }}>{leader.email?.split('@')[0]}</span>
+              <span style={{ fontSize: '11px', fontWeight: '700', color: '#FF4500' }}>{leader.total_votes || 0} votes</span>
+            </div>
+          ))}
         </div>
       )}
 
