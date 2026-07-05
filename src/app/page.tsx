@@ -83,7 +83,7 @@ export default function Home() {
     const matchFilter =
       activeFilter === 'Tat ca' ||
       platform.includes(activeFilter.toLowerCase()) ||
-      category.includes(activeFilter.toLowerCase())
+      (category||String.fromCharCode(32)).includes(activeFilter.toLowerCase())
     return matchSearch && matchFilter
   })
 
