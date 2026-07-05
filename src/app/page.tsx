@@ -47,9 +47,7 @@ function useCountdown() {
 export default function Home() {
   const [deals, setDeals] = useState<any[]>([])
   const [search, setSearch] = useState('')
-  const [activeFilter, setActiveFilter] = useState('Tất cả')
-  const [activeCategory, setActiveCategory] = useState('')
-  const [openMenu, setOpenMenu] = useState('')
+  const [activeFilter, setActiveFilter] = useState('Tat ca')
   const countdown = useCountdown()
 
   useEffect(() => {
@@ -64,116 +62,74 @@ export default function Home() {
     load()
   }, [])
 
+  const filters = [
+    { key: 'Tat ca', label: 'Tat ca' },
+    { key: 'Shopee', label: 'Shopee' },
+    { key: 'Lazada', label: 'Lazada' },
+    { key: 'TikTok', label: 'TikTok' },
+    { key: 'Dien thoai', label: 'Dien thoai' },
+    { key: 'Laptop', label: 'Laptop' },
+    { key: 'Tai nghe', label: 'Tai nghe' },
+    { key: 'Thoi trang', label: 'Thoi trang' },
+    { key: 'My pham', label: 'My pham' },
+    { key: 'Gia dung', label: 'Gia dung' },
+  ]
+
   const filtered = deals.filter((deal) => {
     const name = deal.products?.name?.toLowerCase() || ''
     const platform = deal.products?.platform?.toLowerCase() || ''
-    const category = deal.products?.category || ''
+    const category = deal.products?.category?.toLowerCase() || ''
     const matchSearch = name.includes(search.toLowerCase())
-    const matchPlatform =
-      activeFilter === 'Tất cả' ||
-      platform.includes(activeFilter.toLowerCase())
-    const matchCategory =
-      activeCategory === '' ||
-      category === activeCategory
-    return matchSearch && matchPlatform && matchCategory
+    const matchFilter =
+      activeFilter === 'Tat ca' ||
+      platform.includes(activeFilter.toLowerCase()) ||
+      category.includes(activeFilter.toLowerCase())
+    return matchSearch && matchFilter
   })
 
   const topDeals = deals.slice(0, 5)
 
-  const categories = ['Điện thoại', 'Laptop', 'Tai nghe', 'Đồng hồ', 'Thời trang', 'Mỹ phẩm', 'Gia dụng', 'Bàn phím']
-  const platforms = ['Shopee', 'Lazada', 'TikTok Shop']
-
   return (
     <main style={{ backgroundColor: '#f7f6f2', minHeight: '100vh' }}>
-
-      <div style={{ backgroundColor: '#111', position: 'sticky', top: 0, zIndex: 1000 }}>
+      <div style={{ backgroundColor: '#111', position: 'sticky', top: 0, zIndex: 100 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', height: '64px', padding: '0 24px' }}>
           <a href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
             <div style={{ width: '32px', height: '32px', backgroundColor: '#FF4500', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: '800', fontSize: '16px' }}>D</div>
             <span style={{ fontSize: '20px', fontWeight: '800', color: '#fff' }}>DealApp</span>
           </a>
           <div style={{ flex: 1, position: 'relative' }}>
-            <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px', pointerEvents: 'none' }}>🔍</span>
+            <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px', pointerEvents: 'none' }}>search</span>
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Tìm deal, sản phẩm, cửa hàng..."
+              placeholder="Tim deal, san pham, cua hang..."
               style={{ width: '100%', padding: '10px 16px 10px 42px', backgroundColor: '#fff', border: 'none', borderRadius: '24px', fontSize: '14px', color: '#111', outline: 'none', boxSizing: 'border-box' }}
             />
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexShrink: 0 }}>
             <a href="/alerts" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
-              <div style={{ width: '40px', height: '40px', backgroundColor: '#FF4500', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>🔔</div>
+              <div style={{ width: '40px', height: '40px', backgroundColor: '#FF4500', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>bell</div>
               <span style={{ fontSize: '10px', color: '#aaa', fontWeight: '600' }}>Deal Alert</span>
             </a>
             <a href="/community" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
-              <div style={{ width: '40px', height: '40px', backgroundColor: '#2F80ED', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>🔥</div>
-              <span style={{ fontSize: '10px', color: '#aaa', fontWeight: '600' }}>Cộng đồng</span>
+              <div style={{ width: '40px', height: '40px', backgroundColor: '#2F80ED', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>fire</div>
+              <span style={{ fontSize: '10px', color: '#aaa', fontWeight: '600' }}>Cong dong</span>
             </a>
             <a href="/account" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
-              <div style={{ width: '40px', height: '40px', backgroundColor: '#555', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>👤</div>
-              <span style={{ fontSize: '10px', color: '#aaa', fontWeight: '600' }}>Tài khoản</span>
+              <div style={{ width: '40px', height: '40px', backgroundColor: '#555', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>user</div>
+              <span style={{ fontSize: '10px', color: '#aaa', fontWeight: '600' }}>Tai khoan</span>
             </a>
           </div>
         </div>
-
-        <div style={{ borderTop: '1px solid #222', display: 'flex', alignItems: 'center', padding: '0 16px', overflowX: 'auto' }}>
-          <div style={{ position: 'relative' }}>
+        <div style={{ borderTop: '1px solid #222', display: 'flex', overflowX: 'auto', padding: '0 16px' }}>
+          {filters.map((f) => (
             <button
-              onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === 'Danh mục' ? '' : 'Danh mục') }}
-              style={{ padding: '12px 14px', fontSize: '13px', fontWeight: '600', border: 'none', borderBottom: openMenu === 'Danh mục' ? '2px solid #FF4500' : '2px solid transparent', backgroundColor: 'transparent', color: openMenu === 'Danh mục' ? '#FF4500' : '#ccc', cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '4px' }}
-            >Danh mục ▾</button>
-            {openMenu === 'Danh mục' && (
-              <div style={{ position: 'absolute', top: '100%', left: 0, backgroundColor: '#222', borderRadius: '8px', padding: '8px 0', minWidth: '160px', zIndex: 200, boxShadow: '0 4px 20px rgba(0,0,0,0.4)' }}>
-                <button style={{ display: 'block', width: '100%', padding: '10px 16px', fontSize: '13px', color: '#FF4500', backgroundColor: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: '600' }}
-                  onClick={() => { setActiveCategory(''); setOpenMenu('') }}>Tất cả danh mục</button>
-                {categories.map((item) => (
-                  <button key={item} style={{ display: 'block', width: '100%', padding: '10px 16px', fontSize: '13px', color: activeCategory === item ? '#FF4500' : '#ccc', backgroundColor: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left' }}
-                    onClick={() => { setActiveCategory(item); setActiveFilter('Tất cả'); setOpenMenu('') }}
-                  >{item}</button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div style={{ position: 'relative' }}>
-            <button
-              onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === 'Sàn TMĐT' ? '' : 'Sàn TMĐT') }}
-              style={{ padding: '12px 14px', fontSize: '13px', fontWeight: '600', border: 'none', borderBottom: openMenu === 'Sàn TMĐT' ? '2px solid #FF4500' : '2px solid transparent', backgroundColor: 'transparent', color: openMenu === 'Sàn TMĐT' ? '#FF4500' : '#ccc', cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '4px' }}
-            >Sàn TMĐT ▾</button>
-            {openMenu === 'Sàn TMĐT' && (
-              <div style={{ position: 'absolute', top: '100%', left: 0, backgroundColor: '#222', borderRadius: '8px', padding: '8px 0', minWidth: '160px', zIndex: 200, boxShadow: '0 4px 20px rgba(0,0,0,0.4)' }}>
-                <button style={{ display: 'block', width: '100%', padding: '10px 16px', fontSize: '13px', color: '#FF4500', backgroundColor: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: '600' }}
-                  onClick={() => { setActiveFilter('Tất cả'); setOpenMenu('') }}>Tất cả sàn</button>
-                {platforms.map((item) => (
-                  <button key={item} style={{ display: 'block', width: '100%', padding: '10px 16px', fontSize: '13px', color: activeFilter === item ? '#FF4500' : '#ccc', backgroundColor: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left' }}
-                    onClick={() => { setActiveFilter(item); setActiveCategory(''); setOpenMenu('') }}
-                  >{item}</button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div style={{ position: 'relative' }}>
-            <button
-              onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === 'Cộng đồng' ? '' : 'Cộng đồng') }}
-              style={{ padding: '12px 14px', fontSize: '13px', fontWeight: '600', border: 'none', borderBottom: openMenu === 'Cộng đồng' ? '2px solid #FF4500' : '2px solid transparent', backgroundColor: 'transparent', color: openMenu === 'Cộng đồng' ? '#FF4500' : '#ccc', cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '4px' }}
-            >Cộng đồng ▾</button>
-            {openMenu === 'Cộng đồng' && (
-              <div style={{ position: 'absolute', top: '100%', left: 0, backgroundColor: '#222', borderRadius: '8px', padding: '8px 0', minWidth: '160px', zIndex: 200, boxShadow: '0 4px 20px rgba(0,0,0,0.4)' }}>
-                <a href="/community" style={{ display: 'block', padding: '10px 16px', fontSize: '13px', color: '#ccc', textDecoration: 'none' }}>Deal mới nhất</a>
-                <a href="/community" style={{ display: 'block', padding: '10px 16px', fontSize: '13px', color: '#ccc', textDecoration: 'none' }}>Top tuần</a>
-                <a href="/community" style={{ display: 'block', padding: '10px 16px', fontSize: '13px', color: '#ccc', textDecoration: 'none' }}>Đăng deal</a>
-              </div>
-            )}
-          </div>
-
-          <div style={{ width: '1px', height: '20px', backgroundColor: '#333', margin: '0 8px' }} />
-          <button
-            onClick={() => { setActiveFilter('Tất cả'); setActiveCategory('') }}
-            style={{ padding: '12px 14px', fontSize: '13px', fontWeight: '600', border: 'none', borderBottom: activeFilter === 'Tất cả' && activeCategory === '' ? '2px solid #FF4500' : '2px solid transparent', backgroundColor: 'transparent', color: activeFilter === 'Tất cả' && activeCategory === '' ? '#FF4500' : '#aaa', cursor: 'pointer', whiteSpace: 'nowrap' }}
-          >Tất cả</button>
+              key={f.key}
+              onClick={() => setActiveFilter(f.key)}
+              style={{ padding: '10px 16px', fontSize: '13px', fontWeight: '600', border: 'none', borderBottom: activeFilter === f.key ? '2px solid #FF4500' : '2px solid transparent', backgroundColor: 'transparent', color: activeFilter === f.key ? '#FF4500' : '#aaa', cursor: 'pointer', whiteSpace: 'nowrap' }}
+            >{f.label}</button>
+          ))}
         </div>
       </div>
 
@@ -182,7 +138,7 @@ export default function Home() {
           <div style={{ background: 'linear-gradient(135deg, #FF4500 0%, #ff6b35 100%)', borderRadius: '18px', padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
             <div>
               <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)', fontWeight: '700', letterSpacing: '1px', marginBottom: '4px' }}>FLASH SALE</div>
-              <div style={{ fontSize: '20px', fontWeight: '800', color: '#fff', marginBottom: '10px' }}>Deal sốc hôm nay</div>
+              <div style={{ fontSize: '20px', fontWeight: '800', color: '#fff', marginBottom: '10px' }}>Deal soc hom nay</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 {[countdown.h, countdown.m, countdown.s].map((t, i) => (
                   <span key={i} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -192,20 +148,18 @@ export default function Home() {
                 ))}
               </div>
             </div>
-            <span style={{ fontSize: '56px' }}>🔥</span>
+            <span style={{ fontSize: '56px' }}>fire</span>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-            <span style={{ fontSize: '16px', fontWeight: '700', color: '#111' }}>
-              {activeCategory ? activeCategory : 'Deal hot nhất'}
-            </span>
-            <span style={{ fontSize: '13px', color: '#999' }}>{filtered.length} kết quả</span>
+            <span style={{ fontSize: '16px', fontWeight: '700', color: '#111' }}>Deal hot nhat</span>
+            <span style={{ fontSize: '13px', color: '#999' }}>{filtered.length} ket qua</span>
           </div>
 
           {filtered.length === 0 && (
             <div style={{ textAlign: 'center', padding: '60px 0', color: '#bbb' }}>
-              <div style={{ fontSize: '40px', marginBottom: '8px' }}>🔍</div>
-              <div style={{ fontSize: '14px' }}>Không tìm thấy sản phẩm</div>
+              <div style={{ fontSize: '40px', marginBottom: '8px' }}>search</div>
+              <div style={{ fontSize: '14px' }}>Khong tim thay san pham</div>
             </div>
           )}
 
@@ -235,10 +189,10 @@ export default function Home() {
                       {deal.products?.name}
                     </div>
                     <div style={{ fontSize: '15px', fontWeight: '800', color: '#FF4500' }}>
-                      {deal.current_price?.toLocaleString('vi-VN')}đ
+                      {deal.current_price?.toLocaleString('vi-VN')}d
                     </div>
                     <div style={{ fontSize: '12px', color: '#bbb', textDecoration: 'line-through' }}>
-                      {deal.original_price?.toLocaleString('vi-VN')}đ
+                      {deal.original_price?.toLocaleString('vi-VN')}d
                     </div>
                   </div>
                 </a>
@@ -250,8 +204,7 @@ export default function Home() {
         <div style={{ width: '280px', flexShrink: 0 }}>
           <div style={{ backgroundColor: '#fff', borderRadius: '16px', border: '0.5px solid #e5e4e0', overflow: 'hidden', position: 'sticky', top: '120px' }}>
             <div style={{ padding: '14px 16px', borderBottom: '1px solid #f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontSize: '14px', fontWeight: '700', color: '#111' }}>Deal phổ biến</span>
-              <span style={{ fontSize: '18px' }}>📡</span>
+              <span style={{ fontSize: '14px', fontWeight: '700', color: '#111' }}>Deal pho bien</span>
             </div>
             {topDeals.map((deal: any, i: number) => {
               const ps = getPlatformColor(deal.products?.platform)
@@ -267,7 +220,7 @@ export default function Home() {
                       {deal.products?.name}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <span style={{ fontSize: '13px', fontWeight: '800', color: '#FF4500' }}>{deal.current_price?.toLocaleString('vi-VN')}đ</span>
+                      <span style={{ fontSize: '13px', fontWeight: '800', color: '#FF4500' }}>{deal.current_price?.toLocaleString('vi-VN')}d</span>
                       <span style={{ fontSize: '10px', fontWeight: '700', color: ps.color, backgroundColor: ps.bg, padding: '1px 5px', borderRadius: '3px' }}>-{deal.discount_percent}%</span>
                     </div>
                   </div>
@@ -275,7 +228,7 @@ export default function Home() {
               )
             })}
             <a href="/community" style={{ display: 'block', textAlign: 'center', padding: '12px', fontSize: '13px', color: '#FF4500', fontWeight: '600', textDecoration: 'none', borderTop: '0.5px solid #f0f0f0' }}>
-              Xem tất cả →
+              Xem tat ca
             </a>
           </div>
         </div>
