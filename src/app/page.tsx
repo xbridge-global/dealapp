@@ -83,7 +83,7 @@ export default function Home() {
     const matchFilter =
       activeFilter === 'Tất cả' ||
       platform.includes(activeFilter.toLowerCase()) ||
-      (category||String.fromCharCode(32)).includes(activeFilter.toLowerCase())
+      category.toLowerCase()===activeFilter.toLowerCase()
     return matchSearch && matchFilter
   })
 
@@ -236,6 +236,7 @@ export default function Home() {
     </main>
   )
 }
+
 
 
 
