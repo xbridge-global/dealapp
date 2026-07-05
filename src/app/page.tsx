@@ -86,7 +86,7 @@ export default function Home() {
   return (
     <main style={{ backgroundColor: '#f7f6f2', minHeight: '100vh' }}>
 
-      <div style={{ backgroundColor: '#111', position: 'sticky', top: 0, zIndex: 100 }}>
+      <div style={{ backgroundColor: '#111', position: 'sticky', top: 0, zIndex: 100, overflow: 'visible' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', height: '64px', padding: '0 24px' }}>
           <a href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
             <div style={{ width: '32px', height: '32px', backgroundColor: '#FF4500', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: '800', fontSize: '16px' }}>D</div>
