@@ -158,7 +158,7 @@ export default function Home() {
 
           {filtered.length === 0 && (
             <div style={{ textAlign: 'center', padding: '60px 0', color: '#bbb' }}>
-              <div style={{ fontSize: '40px', marginBottom: '8px' }}🔍</div>
+              <div style={{ fontSize: '40px', marginBottom: '8px' }}>🔍</div>
               <div style={{ fontSize: '14px' }}>Không tìm thấy sản phẩm</div>
             </div>
           )}
