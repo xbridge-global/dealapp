@@ -103,7 +103,7 @@ export default function Home() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Tim deal, san pham, cua hang..."
+              placeholder="Tìm deal, sản phẩm, cửa hàng..."
               style={{ width: '100%', padding: '10px 16px 10px 42px', backgroundColor: '#fff', border: 'none', borderRadius: '24px', fontSize: '14px', color: '#111', outline: 'none', boxSizing: 'border-box' }}
             />
           </div>
