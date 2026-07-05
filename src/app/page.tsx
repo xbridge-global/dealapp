@@ -46,7 +46,7 @@ function useCountdown() {
 
 export default function Home() {
   const [deals, setDeals] = useState<any[]>([])
-  const [search, setSearch] = useState('')
+  const [🔍, setSearch] = useState('')
   const [activeFilter, setActiveFilter] = useState('Tat ca')
   const countdown = useCountdown()
 
@@ -67,12 +67,12 @@ export default function Home() {
     { key: 'Shopee', label: 'Shopee' },
     { key: 'Lazada', label: 'Lazada' },
     { key: 'TikTok', label: 'TikTok' },
-    { key: 'Dien thoai', label: 'Dien thoai' },
+    { key: 'Điện thoại', label: 'Điện thoại' },
     { key: 'Laptop', label: 'Laptop' },
     { key: 'Tai nghe', label: 'Tai nghe' },
-    { key: 'Thoi trang', label: 'Thoi trang' },
-    { key: 'My pham', label: 'My pham' },
-    { key: 'Gia dung', label: 'Gia dung' },
+    { key: 'Thời trang', label: 'Thời trang' },
+    { key: 'Mỹ phẩm', label: 'Mỹ phẩm' },
+    { key: 'Gia dụng', label: 'Gia dụng' },
   ]
 
   const filtered = deals.filter((deal) => {
@@ -109,15 +109,15 @@ export default function Home() {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexShrink: 0 }}>
             <a href="/alerts" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
-              <div style={{ width: '40px', height: '40px', backgroundColor: '#FF4500', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>bell</div>
+              <div style={{ width: '40px', height: '40px', backgroundColor: '#FF4500', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>🔔</div>
               <span style={{ fontSize: '10px', color: '#aaa', fontWeight: '600' }}>Deal Alert</span>
             </a>
             <a href="/community" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
-              <div style={{ width: '40px', height: '40px', backgroundColor: '#2F80ED', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>fire</div>
+              <div style={{ width: '40px', height: '40px', backgroundColor: '#2F80ED', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>🔥</div>
               <span style={{ fontSize: '10px', color: '#aaa', fontWeight: '600' }}>Cong dong</span>
             </a>
             <a href="/account" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
-              <div style={{ width: '40px', height: '40px', backgroundColor: '#555', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>user</div>
+              <div style={{ width: '40px', height: '40px', backgroundColor: '#555', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>👤</div>
               <span style={{ fontSize: '10px', color: '#aaa', fontWeight: '600' }}>Tai khoan</span>
             </a>
           </div>
@@ -138,7 +138,7 @@ export default function Home() {
           <div style={{ background: 'linear-gradient(135deg, #FF4500 0%, #ff6b35 100%)', borderRadius: '18px', padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
             <div>
               <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)', fontWeight: '700', letterSpacing: '1px', marginBottom: '4px' }}>FLASH SALE</div>
-              <div style={{ fontSize: '20px', fontWeight: '800', color: '#fff', marginBottom: '10px' }}>Deal soc hom nay</div>
+              <div style={{ fontSize: '20px', fontWeight: '800', color: '#fff', marginBottom: '10px' }}>Deal sốc hôm nay</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 {[countdown.h, countdown.m, countdown.s].map((t, i) => (
                   <span key={i} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -152,14 +152,14 @@ export default function Home() {
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-            <span style={{ fontSize: '16px', fontWeight: '700', color: '#111' }}>Deal hot nhat</span>
-            <span style={{ fontSize: '13px', color: '#999' }}>{filtered.length} ket qua</span>
+            <span style={{ fontSize: '16px', fontWeight: '700', color: '#111' }}>Deal hot nhất</span>
+            <span style={{ fontSize: '13px', color: '#999' }}>{filtered.length} kết quả</span>
           </div>
 
           {filtered.length === 0 && (
             <div style={{ textAlign: 'center', padding: '60px 0', color: '#bbb' }}>
               <div style={{ fontSize: '40px', marginBottom: '8px' }}>search</div>
-              <div style={{ fontSize: '14px' }}>Khong tim thay san pham</div>
+              <div style={{ fontSize: '14px' }}>Không tìm thấy sản phẩm</div>
             </div>
           )}
 
@@ -204,7 +204,7 @@ export default function Home() {
         <div style={{ width: '280px', flexShrink: 0 }}>
           <div style={{ backgroundColor: '#fff', borderRadius: '16px', border: '0.5px solid #e5e4e0', overflow: 'hidden', position: 'sticky', top: '120px' }}>
             <div style={{ padding: '14px 16px', borderBottom: '1px solid #f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontSize: '14px', fontWeight: '700', color: '#111' }}>Deal pho bien</span>
+              <span style={{ fontSize: '14px', fontWeight: '700', color: '#111' }}>Deal phổ biến</span>
             </div>
             {topDeals.map((deal: any, i: number) => {
               const ps = getPlatformColor(deal.products?.platform)
@@ -228,7 +228,7 @@ export default function Home() {
               )
             })}
             <a href="/community" style={{ display: 'block', textAlign: 'center', padding: '12px', fontSize: '13px', color: '#FF4500', fontWeight: '600', textDecoration: 'none', borderTop: '0.5px solid #f0f0f0' }}>
-              Xem tat ca
+              Xem tất cả →
             </a>
           </div>
         </div>
