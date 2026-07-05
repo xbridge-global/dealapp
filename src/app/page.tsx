@@ -47,7 +47,7 @@ function useCountdown() {
 export default function Home() {
   const [deals, setDeals] = useState<any[]>([])
   const [search, setSearch] = useState('')
-  const [activeFilter, setActiveFilter] = useState('Tat ca')
+  const [activeFilter, setActiveFilter] = useState('Tất cả')
   const countdown = useCountdown()
 
   useEffect(() => {
@@ -63,7 +63,7 @@ export default function Home() {
   }, [])
 
   const filters = [
-    { key: 'Tat ca', label: 'Tat ca' },
+    { key: 'Tất cả', label: 'Tất cả' },
     { key: 'Shopee', label: 'Shopee' },
     { key: 'Lazada', label: 'Lazada' },
     { key: 'TikTok', label: 'TikTok' },
@@ -81,7 +81,7 @@ export default function Home() {
     const category = deal.products?.category?.toLowerCase() || ''
     const matchSearch = name.includes(search.toLowerCase())
     const matchFilter =
-      activeFilter === 'Tat ca' ||
+      activeFilter === 'Tất cả' ||
       platform.includes(activeFilter.toLowerCase()) ||
       (category||String.fromCharCode(32)).includes(activeFilter.toLowerCase())
     return matchSearch && matchFilter
