@@ -46,7 +46,7 @@ function useCountdown() {
 
 export default function Home() {
   const [deals, setDeals] = useState<any[]>([])
-  const [search, setSearch] = useState('')
+  const [🔍, setSearch] = useState('')
   const [activeFilter, setActiveFilter] = useState('Tat ca')
   const countdown = useCountdown()
 
@@ -84,7 +84,7 @@ export default function Home() {
       activeFilter === 'Tat ca' ||
       platform.includes(activeFilter.toLowerCase()) ||
       category.includes(activeFilter.toLowerCase())
-    return matchReplace All && matchFilter
+    return matchSearch && matchFilter
   })
 
   const topDeals = deals.slice(0, 5)
@@ -98,12 +98,12 @@ export default function Home() {
             <span style={{ fontSize: '20px', fontWeight: '800', color: '#fff' }}>DealApp</span>
           </a>
           <div style={{ flex: 1, position: 'relative' }}>
-            <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px', pointerEvents: 'none' }}>Replace All</span>
+            <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px', pointerEvents: 'none' }}>search</span>
             <input
               type="text"
-              value={Replace All}
-              onChange={(e) => setReplace All(e.target.value)}
-              placeholder="Tìm deal, sản phẩm, cửa hàng..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Tim deal, san pham, cua hang..."
               style={{ width: '100%', padding: '10px 16px 10px 42px', backgroundColor: '#fff', border: 'none', borderRadius: '24px', fontSize: '14px', color: '#111', outline: 'none', boxSizing: 'border-box' }}
             />
           </div>
@@ -148,7 +148,7 @@ export default function Home() {
                 ))}
               </div>
             </div>
-            <span style={{ fontSize: '56px' }}>Replace All</span>
+            <span style={{ fontSize: '56px' }}>fire</span>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
@@ -158,7 +158,7 @@ export default function Home() {
 
           {filtered.length === 0 && (
             <div style={{ textAlign: 'center', padding: '60px 0', color: '#bbb' }}>
-              <div style={{ fontSize: '40px', marginBottom: '8px' }}>Replace All</div>
+              <div style={{ fontSize: '40px', marginBottom: '8px' }}>search</div>
               <div style={{ fontSize: '14px' }}>Không tìm thấy sản phẩm</div>
             </div>
           )}
