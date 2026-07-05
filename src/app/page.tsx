@@ -46,7 +46,7 @@ function useCountdown() {
 
 export default function Home() {
   const [deals, setDeals] = useState<any[]>([])
-  const [🔍, setSearch] = useState('')
+  const [search, setSearch] = useState('')
   const [activeFilter, setActiveFilter] = useState('Tat ca')
   const countdown = useCountdown()
 
