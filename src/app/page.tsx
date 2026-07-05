@@ -148,7 +148,7 @@ export default function Home() {
                 ))}
               </div>
             </div>
-            <span style={{ fontSize: '56px' }}>fire</span>
+            <span style={{ fontSize: '56px' }}🔥</span>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
@@ -158,7 +158,7 @@ export default function Home() {
 
           {filtered.length === 0 && (
             <div style={{ textAlign: 'center', padding: '60px 0', color: '#bbb' }}>
-              <div style={{ fontSize: '40px', marginBottom: '8px' }}>search</div>
+              <div style={{ fontSize: '40px', marginBottom: '8px' }}🔍</div>
               <div style={{ fontSize: '14px' }}>Không tìm thấy sản phẩm</div>
             </div>
           )}
