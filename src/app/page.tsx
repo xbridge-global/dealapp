@@ -82,7 +82,7 @@ export default function Home() {
   return (
     <main style={{ backgroundColor: '#f7f6f2', minHeight: '100vh', paddingBottom: '80px' }}>
 
-      style={{ backgroundColor: '#f7f6f2', padding: '14px 16px 10px', position: 'sticky', top: 0, zIndex: 10, pointerEvents: 'auto' }}
+      <div style={{ backgroundColor: '#f7f6f2', padding: '14px 16px 10px', position: 'sticky', top: 0, zIndex: 10, pointerEvents: 'auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <div style={{ width: '30px', height: '30px', backgroundColor: '#FF4500', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: '800', fontSize: '15px' }}>D</div>
