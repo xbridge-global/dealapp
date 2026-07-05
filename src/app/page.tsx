@@ -158,7 +158,7 @@ export default function Home() {
             const ps = getPlatformColor(deal.products?.platform)
             return (
               
-                key={deal.id}
+                <a key={deal.id}
                 href={'/product/' + deal.product_id}
                 style={{ backgroundColor: '#fff', borderRadius: '16px', border: '0.5px solid #e5e4e0', textDecoration: 'none', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
               >
