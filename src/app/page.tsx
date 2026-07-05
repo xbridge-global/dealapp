@@ -83,11 +83,19 @@ export default function Home() {
     const matchFilter =
       activeFilter === 'Tất cả' ||
       platform.includes(activeFilter.toLowerCase()) ||
-      category.toLowerCase()===activeFilter.toLowerCase()
+      category.toLowerCase() === activeFilter.toLowerCase()
     return matchSearch && matchFilter
   })
 
   const topDeals = deals.slice(0, 5)
+  const trendingDeals = deals.slice(5, 10)
+
+  const stores = [
+    { name: 'Shopee', emoji: '🛒', color: '#EE4D2D', bg: '#FFF0EA', url: 'https://shopee.vn' },
+    { name: 'Lazada', emoji: '📦', color: '#7B2FFF', bg: '#F0EAFF', url: 'https://lazada.vn' },
+    { name: 'TikTok Shop', emoji: '🎵', color: '#00C853', bg: '#EAFFF5', url: 'https://tiktok.com/shop' },
+    { name: 'Temu', emoji: '🌏', color: '#FF6600', bg: '#FFF3EA', url: 'https://temu.com' },
+  ]
 
   return (
     <main style={{ backgroundColor: '#f7f6f2', minHeight: '100vh' }}>
@@ -114,11 +122,11 @@ export default function Home() {
             </a>
             <a href="/community" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
               <div style={{ width: '40px', height: '40px', backgroundColor: '#2F80ED', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>🔥</div>
-              <span style={{ fontSize: '10px', color: '#aaa', fontWeight: '600' }}>Cong dong</span>
+              <span style={{ fontSize: '10px', color: '#aaa', fontWeight: '600' }}>Cộng đồng</span>
             </a>
             <a href="/account" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
               <div style={{ width: '40px', height: '40px', backgroundColor: '#555', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>👤</div>
-              <span style={{ fontSize: '10px', color: '#aaa', fontWeight: '600' }}>Tai khoan</span>
+              <span style={{ fontSize: '10px', color: '#aaa', fontWeight: '600' }}>Tài khoản</span>
             </a>
           </div>
         </div>
@@ -134,6 +142,8 @@ export default function Home() {
       </div>
 
       <div style={{ display: 'flex', gap: '20px', padding: '16px 24px', maxWidth: '1400px', margin: '0 auto' }}>
+
+        {/* Main content */}
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ background: 'linear-gradient(135deg, #FF4500 0%, #ff6b35 100%)', borderRadius: '18px', padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
             <div>
@@ -189,10 +199,10 @@ export default function Home() {
                       {deal.products?.name}
                     </div>
                     <div style={{ fontSize: '15px', fontWeight: '800', color: '#FF4500' }}>
-                      {deal.current_price?.toLocaleString('vi-VN')}d
+                      {deal.current_price?.toLocaleString('vi-VN')}đ
                     </div>
                     <div style={{ fontSize: '12px', color: '#bbb', textDecoration: 'line-through' }}>
-                      {deal.original_price?.toLocaleString('vi-VN')}d
+                      {deal.original_price?.toLocaleString('vi-VN')}đ
                     </div>
                   </div>
                 </a>
@@ -201,47 +211,106 @@ export default function Home() {
           </div>
         </div>
 
-        <div style={{ width: '280px', flexShrink: 0 }}>
+        {/* Sidebar */}
+        <div style={{ width: '300px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
+
+          {/* Deal phổ biến */}
           <div style={{ backgroundColor: '#fff', borderRadius: '16px', border: '0.5px solid #e5e4e0', overflow: 'hidden', position: 'sticky', top: '120px' }}>
-            <div style={{ padding: '14px 16px', borderBottom: '1px solid #f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ padding: '12px 16px', borderBottom: '1px solid #f0f0f0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '16px' }}>🔥</span>
               <span style={{ fontSize: '14px', fontWeight: '700', color: '#111' }}>Deal phổ biến</span>
             </div>
             {topDeals.map((deal: any, i: number) => {
               const ps = getPlatformColor(deal.products?.platform)
               return (
                 <a key={deal.id} href={'/product/' + deal.product_id}
-                  style={{ display: 'flex', gap: '10px', padding: '12px 16px', borderBottom: '0.5px solid #f7f6f2', textDecoration: 'none', alignItems: 'flex-start' }}
+                  style={{ display: 'flex', gap: '10px', padding: '10px 16px', borderBottom: '0.5px solid #f7f6f2', textDecoration: 'none', alignItems: 'flex-start' }}
                   onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#fafafa')}
                   onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                 >
-                  <span style={{ fontSize: '13px', fontWeight: '800', color: i < 3 ? '#FF4500' : '#bbb', minWidth: '16px' }}>{i + 1}</span>
+                  <span style={{ fontSize: '13px', fontWeight: '800', color: i < 3 ? '#FF4500' : '#bbb', minWidth: '18px' }}>{i + 1}</span>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: '12px', fontWeight: '600', color: '#111', marginBottom: '4px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: '1.4' }}>
+                    <div style={{ fontSize: '12px', fontWeight: '600', color: '#111', marginBottom: '3px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: '1.4' }}>
                       {deal.products?.name}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <span style={{ fontSize: '13px', fontWeight: '800', color: '#FF4500' }}>{deal.current_price?.toLocaleString('vi-VN')}d</span>
+                      <span style={{ fontSize: '13px', fontWeight: '800', color: '#FF4500' }}>{deal.current_price?.toLocaleString('vi-VN')}đ</span>
                       <span style={{ fontSize: '10px', fontWeight: '700', color: ps.color, backgroundColor: ps.bg, padding: '1px 5px', borderRadius: '3px' }}>-{deal.discount_percent}%</span>
                     </div>
                   </div>
                 </a>
               )
             })}
-            <a href="/community" style={{ display: 'block', textAlign: 'center', padding: '12px', fontSize: '13px', color: '#FF4500', fontWeight: '600', textDecoration: 'none', borderTop: '0.5px solid #f0f0f0' }}>
+            <a href="/community" style={{ display: 'block', textAlign: 'center', padding: '10px', fontSize: '13px', color: '#FF4500', fontWeight: '600', textDecoration: 'none', borderTop: '0.5px solid #f0f0f0' }}>
               Xem tất cả →
             </a>
           </div>
+
+          {/* Deal đang trending */}
+          <div style={{ backgroundColor: '#fff', borderRadius: '16px', border: '0.5px solid #e5e4e0', overflow: 'hidden' }}>
+            <div style={{ padding: '12px 16px', borderBottom: '1px solid #f0f0f0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '16px' }}>📈</span>
+              <span style={{ fontSize: '14px', fontWeight: '700', color: '#111' }}>Đang trending</span>
+            </div>
+            {trendingDeals.length === 0 ? topDeals.slice(0, 3).map((deal: any, i: number) => {
+              const ps = getPlatformColor(deal.products?.platform)
+              return (
+                <a key={deal.id} href={'/product/' + deal.product_id}
+                  style={{ display: 'flex', gap: '10px', padding: '10px 16px', borderBottom: '0.5px solid #f7f6f2', textDecoration: 'none', alignItems: 'flex-start' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#fafafa')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                >
+                  <span style={{ fontSize: '16px' }}>{['🥇', '🥈', '🥉'][i]}</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '12px', fontWeight: '600', color: '#111', marginBottom: '3px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: '1.4' }}>
+                      {deal.products?.name}
+                    </div>
+                    <span style={{ fontSize: '10px', fontWeight: '700', color: ps.color, backgroundColor: ps.bg, padding: '1px 5px', borderRadius: '3px' }}>-{deal.discount_percent}%</span>
+                  </div>
+                </a>
+              )
+            }) : trendingDeals.map((deal: any, i: number) => {
+              const ps = getPlatformColor(deal.products?.platform)
+              return (
+                <a key={deal.id} href={'/product/' + deal.product_id}
+                  style={{ display: 'flex', gap: '10px', padding: '10px 16px', borderBottom: '0.5px solid #f7f6f2', textDecoration: 'none', alignItems: 'flex-start' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#fafafa')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                >
+                  <span style={{ fontSize: '16px' }}>{i < 3 ? ['🥇', '🥈', '🥉'][i] : '🔸'}</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '12px', fontWeight: '600', color: '#111', marginBottom: '3px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: '1.4' }}>
+                      {deal.products?.name}
+                    </div>
+                    <span style={{ fontSize: '10px', fontWeight: '700', color: ps.color, backgroundColor: ps.bg, padding: '1px 5px', borderRadius: '3px' }}>-{deal.discount_percent}%</span>
+                  </div>
+                </a>
+              )
+            })}
+          </div>
+
+          {/* Sàn TMĐT */}
+          <div style={{ backgroundColor: '#fff', borderRadius: '16px', border: '0.5px solid #e5e4e0', overflow: 'hidden' }}>
+            <div style={{ padding: '12px 16px', borderBottom: '1px solid #f0f0f0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '16px' }}>🛒</span>
+              <span style={{ fontSize: '14px', fontWeight: '700', color: '#111' }}>Sàn TMĐT</span>
+            </div>
+            <div style={{ padding: '12px 16px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              {stores.map((store) => (
+                <a key={store.name} href={store.url} target="_blank" rel="noopener noreferrer"
+                  style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 10px', backgroundColor: store.bg, borderRadius: '10px', textDecoration: 'none', border: '0.5px solid transparent' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.border = `0.5px solid ${store.color}`)}
+                  onMouseLeave={(e) => (e.currentTarget.style.border = '0.5px solid transparent')}
+                >
+                  <span style={{ fontSize: '18px' }}>{store.emoji}</span>
+                  <span style={{ fontSize: '12px', fontWeight: '700', color: store.color }}>{store.name}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+
         </div>
       </div>
     </main>
   )
 }
-
-
-
-
-
-
-
-
-
