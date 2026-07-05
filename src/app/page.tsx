@@ -84,7 +84,7 @@ export default function Home() {
   const platforms = ['Shopee', 'Lazada', 'TikTok Shop']
 
   return (
-    <main style={{ backgroundColor: '#f7f6f2', minHeight: '100vh' }} onClick={() => setOpenMenu('')}>
+    <main style={{ backgroundColor: '#f7f6f2', minHeight: '100vh' }}>
 
       <div style={{ backgroundColor: '#111', position: 'sticky', top: 0, zIndex: 100 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', height: '64px', padding: '0 24px' }}>
