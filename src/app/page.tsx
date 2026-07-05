@@ -26,10 +26,11 @@ function useCountdown() {
   useEffect(() => {
     function tick() {
       const now = new Date()
-      const vnOffset = 7 * 60
-const utc = now.getTime() + now.getTimezoneOffset() * 60000
-const vnNow = new Date(utc + vnOffset * 60000)
-const end = new Date(vnNow.getFullYear(), vnNow.getMonth(), vnNow.getDate(), 23, 59, 59)
+      const utc = now.getTime() + now.getTimezoneOffset() * 60000
+const vnNow = new Date(utc + 7 * 3600000)
+const endOfDay = new Date(vnNow)
+endOfDay.setHours(23, 59, 59, 0)
+const end = new Date(endOfDay.getTime() - 7 * 3600000 + now.getTimezoneOffset() * (-60000))
 const diff = Math.max(0, Math.floor((end.getTime() - vnNow.getTime()) / 1000))
       const h = Math.floor(diff / 3600)
       const m = Math.floor((diff % 3600) / 60)
