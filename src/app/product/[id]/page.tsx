@@ -87,16 +87,50 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         <div style={{ margin: '0 16px 12px', backgroundColor: '#fff', borderRadius: '16px', padding: '14px', border: '0.5px solid #e5e4e0' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
             <span style={{ fontSize: '13px', fontWeight: '700', color: '#111' }}>Lịch sử giá</span>
-            <span style={{ fontSize: '11px', color: '#FF4500' }}>3 tháng</span>
+            <span style={{ fontSize: '11px', color: '#FF4500' }}>30 ngày</span>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            {history.slice().reverse().map((h: any, i: number) => (
-              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '0.5px solid #f0efe9' }}>
-                <span style={{ fontSize: '11px', color: '#999' }}>{new Date(h.recorded_at).toLocaleDateString('vi-VN')}</span>
-                <span style={{ fontSize: '12px', fontWeight: '600', color: '#111' }}>{h.price.toLocaleString('vi-VN')}đ</span>
+          {(() => {
+            const prices = history.map((h: any) => h.price)
+            const minP = Math.min(...prices)
+            const maxP = Math.max(...prices)
+            const range = maxP - minP || 1
+            const W = 320, H = 80, pad = 8
+            const pts = history.map((h: any, i: number) => {
+              const x = pad + (i / (history.length - 1)) * (W - pad * 2)
+              const y = pad + (1 - (h.price - minP) / range) * (H - pad * 2)
+              return `${x},${y}`
+            }).join(' ')
+            const lastH = history[history.length - 1]
+            const lastX = W - pad
+            const lastY = pad + (1 - (lastH.price - minP) / range) * (H - pad * 2)
+            return (
+              <div style={{ overflowX: 'auto' }}>
+                <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: '80px' }}>
+                  <defs>
+                    <linearGradient id="priceGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#FF4500" stopOpacity="0.2" />
+                      <stop offset="100%" stopColor="#FF4500" stopOpacity="0" />
+                    </linearGradient>
+                  </defs>
+                  <polyline points={pts} fill="none" stroke="#FF4500" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+                  <polyline points={`${pad},${H} ${pts} ${lastX},${H}`} fill="url(#priceGrad)" stroke="none" />
+                  <circle cx={lastX} cy={lastY} r="4" fill="#FF4500" />
+                </svg>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px' }}>
+                  <span style={{ fontSize: '10px', color: '#999' }}>{new Date(history[0].recorded_at).toLocaleDateString('vi-VN')}</span>
+                  <span style={{ fontSize: '10px', color: '#999' }}>{new Date(history[history.length-1].recorded_at).toLocaleDateString('vi-VN')}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ fontSize: '10px', color: '#1D9E75', fontWeight: '700' }}>Thấp: {minP.toLocaleString('vi-VN')}đ</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ fontSize: '10px', color: '#FF4500', fontWeight: '700' }}>Cao: {maxP.toLocaleString('vi-VN')}đ</span>
+                  </div>
+                </div>
               </div>
-            ))}
-          </div>
+            )
+          })()}
         </div>
       )}
 
