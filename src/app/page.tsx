@@ -26,7 +26,11 @@ function useCountdown() {
   useEffect(() => {
     function tick() {
       const now = new Date()
-      const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59)
+      const vnOffset = 7 * 60
+const utc = now.getTime() + now.getTimezoneOffset() * 60000
+const vnNow = new Date(utc + vnOffset * 60000)
+const end = new Date(vnNow.getFullYear(), vnNow.getMonth(), vnNow.getDate(), 23, 59, 59)
+const diff = Math.max(0, Math.floor((end.getTime() - vnNow.getTime()) / 1000))
       const diff = Math.max(0, Math.floor((end.getTime() - now.getTime()) / 1000))
       const h = Math.floor(diff / 3600)
       const m = Math.floor((diff % 3600) / 60)
