@@ -48,6 +48,7 @@ export default function Home() {
   const [deals, setDeals] = useState<any[]>([])
   const [search, setSearch] = useState('')
   const [activeFilter, setActiveFilter] = useState('Tất cả')
+  const [activeCategory, setActiveCategory] = useState('')
   const [openMenu, setOpenMenu] = useState('')
   const countdown = useCountdown()
 
@@ -63,27 +64,29 @@ export default function Home() {
     load()
   }, [])
 
-  const filters = ['Tất cả', 'Shopee', 'Lazada', 'TikTok']
-
   const filtered = deals.filter((deal) => {
     const name = deal.products?.name?.toLowerCase() || ''
     const platform = deal.products?.platform?.toLowerCase() || ''
+    const category = deal.products?.category || ''
     const matchSearch = name.includes(search.toLowerCase())
-    const matchFilter =
+    const matchPlatform =
       activeFilter === 'Tất cả' ||
       platform.includes(activeFilter.toLowerCase())
-    return matchSearch && matchFilter
+    const matchCategory =
+      activeCategory === '' ||
+      category === activeCategory
+    return matchSearch && matchPlatform && matchCategory
   })
 
   const topDeals = deals.slice(0, 5)
 
+  const categories = ['Điện thoại', 'Laptop', 'Tai nghe', 'Đồng hồ', 'Thời trang', 'Mỹ phẩm', 'Gia dụng', 'Bàn phím']
+  const platforms = ['Shopee', 'Lazada', 'TikTok Shop']
+
   return (
     <main style={{ backgroundColor: '#f7f6f2', minHeight: '100vh' }} onClick={() => setOpenMenu('')}>
 
-      {/* Header */}
       <div style={{ backgroundColor: '#111', position: 'sticky', top: 0, zIndex: 100 }}>
-
-        {/* Top bar */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', height: '64px', padding: '0 24px' }}>
           <a href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
             <div style={{ width: '32px', height: '32px', backgroundColor: '#FF4500', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: '800', fontSize: '16px' }}>D</div>
@@ -115,47 +118,67 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Nav bar */}
         <div style={{ borderTop: '1px solid #222', display: 'flex', alignItems: 'center', padding: '0 16px', overflowX: 'auto' }}>
-          {[
-            { label: 'Danh mục', items: ['Điện thoại', 'Laptop', 'Tai nghe', 'Đồng hồ', 'Thời trang', 'Mỹ phẩm', 'Gia dụng'] },
-            { label: 'Sàn TMĐT', items: ['Shopee', 'Lazada', 'TikTok Shop'] },
-            { label: 'Cộng đồng', items: ['Deal mới nhất', 'Top tuần', 'Đăng deal'] },
-          ].map((menu) => (
-            <div key={menu.label} style={{ position: 'relative' }}>
-              <button
-                onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === menu.label ? '' : menu.label) }}
-                style={{ padding: '12px 14px', fontSize: '13px', fontWeight: '600', border: 'none', borderBottom: openMenu === menu.label ? '2px solid #FF4500' : '2px solid transparent', backgroundColor: 'transparent', color: openMenu === menu.label ? '#FF4500' : '#ccc', cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '4px' }}
-              >{menu.label} ▾</button>
-              {openMenu === menu.label && (
-                <div style={{ position: 'absolute', top: '100%', left: 0, backgroundColor: '#222', borderRadius: '8px', padding: '8px 0', minWidth: '160px', zIndex: 200, boxShadow: '0 4px 20px rgba(0,0,0,0.4)' }}>
-                  {menu.items.map((item) => (
-                    <button key={item} style={{ display: 'block', width: '100%', padding: '10px 16px', fontSize: '13px', color: '#ccc', backgroundColor: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left' }}
-                      onClick={() => { setActiveFilter(item); setOpenMenu('') }}
-                    >{item}</button>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-          <div style={{ width: '1px', height: '20px', backgroundColor: '#333', margin: '0 4px' }} />
-          {filters.map((f) => (
+          <div style={{ position: 'relative' }}>
             <button
-              key={f}
-              onClick={() => setActiveFilter(f)}
-              style={{ padding: '12px 14px', fontSize: '13px', fontWeight: '600', border: 'none', borderBottom: activeFilter === f ? '2px solid #FF4500' : '2px solid transparent', backgroundColor: 'transparent', color: activeFilter === f ? '#FF4500' : '#aaa', cursor: 'pointer', whiteSpace: 'nowrap' }}
-            >{f}</button>
-          ))}
+              onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === 'Danh mục' ? '' : 'Danh mục') }}
+              style={{ padding: '12px 14px', fontSize: '13px', fontWeight: '600', border: 'none', borderBottom: openMenu === 'Danh mục' ? '2px solid #FF4500' : '2px solid transparent', backgroundColor: 'transparent', color: openMenu === 'Danh mục' ? '#FF4500' : '#ccc', cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '4px' }}
+            >Danh mục ▾</button>
+            {openMenu === 'Danh mục' && (
+              <div style={{ position: 'absolute', top: '100%', left: 0, backgroundColor: '#222', borderRadius: '8px', padding: '8px 0', minWidth: '160px', zIndex: 200, boxShadow: '0 4px 20px rgba(0,0,0,0.4)' }}>
+                <button style={{ display: 'block', width: '100%', padding: '10px 16px', fontSize: '13px', color: '#FF4500', backgroundColor: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: '600' }}
+                  onClick={() => { setActiveCategory(''); setOpenMenu('') }}>Tất cả danh mục</button>
+                {categories.map((item) => (
+                  <button key={item} style={{ display: 'block', width: '100%', padding: '10px 16px', fontSize: '13px', color: activeCategory === item ? '#FF4500' : '#ccc', backgroundColor: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left' }}
+                    onClick={() => { setActiveCategory(item); setActiveFilter('Tất cả'); setOpenMenu('') }}
+                  >{item}</button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div style={{ position: 'relative' }}>
+            <button
+              onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === 'Sàn TMĐT' ? '' : 'Sàn TMĐT') }}
+              style={{ padding: '12px 14px', fontSize: '13px', fontWeight: '600', border: 'none', borderBottom: openMenu === 'Sàn TMĐT' ? '2px solid #FF4500' : '2px solid transparent', backgroundColor: 'transparent', color: openMenu === 'Sàn TMĐT' ? '#FF4500' : '#ccc', cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '4px' }}
+            >Sàn TMĐT ▾</button>
+            {openMenu === 'Sàn TMĐT' && (
+              <div style={{ position: 'absolute', top: '100%', left: 0, backgroundColor: '#222', borderRadius: '8px', padding: '8px 0', minWidth: '160px', zIndex: 200, boxShadow: '0 4px 20px rgba(0,0,0,0.4)' }}>
+                <button style={{ display: 'block', width: '100%', padding: '10px 16px', fontSize: '13px', color: '#FF4500', backgroundColor: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: '600' }}
+                  onClick={() => { setActiveFilter('Tất cả'); setOpenMenu('') }}>Tất cả sàn</button>
+                {platforms.map((item) => (
+                  <button key={item} style={{ display: 'block', width: '100%', padding: '10px 16px', fontSize: '13px', color: activeFilter === item ? '#FF4500' : '#ccc', backgroundColor: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left' }}
+                    onClick={() => { setActiveFilter(item); setActiveCategory(''); setOpenMenu('') }}
+                  >{item}</button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div style={{ position: 'relative' }}>
+            <button
+              onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === 'Cộng đồng' ? '' : 'Cộng đồng') }}
+              style={{ padding: '12px 14px', fontSize: '13px', fontWeight: '600', border: 'none', borderBottom: openMenu === 'Cộng đồng' ? '2px solid #FF4500' : '2px solid transparent', backgroundColor: 'transparent', color: openMenu === 'Cộng đồng' ? '#FF4500' : '#ccc', cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '4px' }}
+            >Cộng đồng ▾</button>
+            {openMenu === 'Cộng đồng' && (
+              <div style={{ position: 'absolute', top: '100%', left: 0, backgroundColor: '#222', borderRadius: '8px', padding: '8px 0', minWidth: '160px', zIndex: 200, boxShadow: '0 4px 20px rgba(0,0,0,0.4)' }}>
+                <a href="/community" style={{ display: 'block', padding: '10px 16px', fontSize: '13px', color: '#ccc', textDecoration: 'none' }}>Deal mới nhất</a>
+                <a href="/community" style={{ display: 'block', padding: '10px 16px', fontSize: '13px', color: '#ccc', textDecoration: 'none' }}>Top tuần</a>
+                <a href="/community" style={{ display: 'block', padding: '10px 16px', fontSize: '13px', color: '#ccc', textDecoration: 'none' }}>Đăng deal</a>
+              </div>
+            )}
+          </div>
+
+          <div style={{ width: '1px', height: '20px', backgroundColor: '#333', margin: '0 8px' }} />
+          <button
+            onClick={() => { setActiveFilter('Tất cả'); setActiveCategory('') }}
+            style={{ padding: '12px 14px', fontSize: '13px', fontWeight: '600', border: 'none', borderBottom: activeFilter === 'Tất cả' && activeCategory === '' ? '2px solid #FF4500' : '2px solid transparent', backgroundColor: 'transparent', color: activeFilter === 'Tất cả' && activeCategory === '' ? '#FF4500' : '#aaa', cursor: 'pointer', whiteSpace: 'nowrap' }}
+          >Tất cả</button>
         </div>
       </div>
 
-      {/* Body: main + sidebar */}
       <div style={{ display: 'flex', gap: '20px', padding: '16px 24px', maxWidth: '1400px', margin: '0 auto' }}>
-
-        {/* Main content */}
         <div style={{ flex: 1, minWidth: 0 }}>
-
-          {/* Flash Sale Banner */}
           <div style={{ background: 'linear-gradient(135deg, #FF4500 0%, #ff6b35 100%)', borderRadius: '18px', padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
             <div>
               <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)', fontWeight: '700', letterSpacing: '1px', marginBottom: '4px' }}>FLASH SALE</div>
@@ -172,9 +195,10 @@ export default function Home() {
             <span style={{ fontSize: '56px' }}>🔥</span>
           </div>
 
-          {/* Deal grid */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-            <span style={{ fontSize: '16px', fontWeight: '700', color: '#111' }}>Deal hot nhất</span>
+            <span style={{ fontSize: '16px', fontWeight: '700', color: '#111' }}>
+              {activeCategory ? activeCategory : 'Deal hot nhất'}
+            </span>
             <span style={{ fontSize: '13px', color: '#999' }}>{filtered.length} kết quả</span>
           </div>
 
@@ -190,7 +214,7 @@ export default function Home() {
               const ps = getPlatformColor(deal.products?.platform)
               return (
                 <a key={deal.id} href={'/product/' + deal.product_id}
-                  style={{ backgroundColor: '#fff', borderRadius: '16px', border: '0.5px solid #e5e4e0', textDecoration: 'none', overflow: 'hidden', display: 'flex', flexDirection: 'column', transition: 'box-shadow 0.2s' }}
+                  style={{ backgroundColor: '#fff', borderRadius: '16px', border: '0.5px solid #e5e4e0', textDecoration: 'none', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
                   onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.1)')}
                   onMouseLeave={(e) => (e.currentTarget.style.boxShadow = 'none')}
                 >
@@ -223,7 +247,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Sidebar */}
         <div style={{ width: '280px', flexShrink: 0 }}>
           <div style={{ backgroundColor: '#fff', borderRadius: '16px', border: '0.5px solid #e5e4e0', overflow: 'hidden', position: 'sticky', top: '120px' }}>
             <div style={{ padding: '14px 16px', borderBottom: '1px solid #f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
