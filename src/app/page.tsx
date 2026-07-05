@@ -79,7 +79,7 @@ export default function Home() {
     const name = deal.products?.name?.toLowerCase() || ''
     const platform = deal.products?.platform?.toLowerCase() || ''
     const category = deal.products?.category?.toLowerCase() || ''
-    const matchReplace All = name.includes(Replace All.toLowerCase())
+    const matchSearch = name.includes(search.toLowerCase())
     const matchFilter =
       activeFilter === 'Tat ca' ||
       platform.includes(activeFilter.toLowerCase()) ||
