@@ -98,7 +98,7 @@ export default function Home() {
             <span style={{ fontSize: '20px', fontWeight: '800', color: '#fff' }}>DealApp</span>
           </a>
           <div style={{ flex: 1, position: 'relative' }}>
-            <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px', pointerEvents: 'none' }}🔍</span>
+            <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px', pointerEvents: 'none' }}>🔍</span>
             <input
               type="text"
               value={search}
@@ -236,6 +236,7 @@ export default function Home() {
     </main>
   )
 }
+
 
 
 
