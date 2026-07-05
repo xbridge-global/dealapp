@@ -7,7 +7,7 @@ export async function POST(request: Request) {
   const { email, productName, currentPrice, targetPrice, productUrl } = await request.json()
 
   const { data, error } = await resend.emails.send({
-    from: 'DealApp <alert@dealapp.vn>',
+    from: 'DealApp <alert@xbridge.global>',
     to: email,
     subject: `Giá ${productName} đã đạt mục tiêu!`,
     html: `
