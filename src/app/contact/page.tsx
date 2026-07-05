@@ -1,3 +1,4 @@
+'use client'
 export default function Contact() {
   return (
     <main style={{ backgroundColor: '#f7f6f2', minHeight: '100vh', padding: '40px 24px' }}>
