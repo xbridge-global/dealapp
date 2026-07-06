@@ -183,8 +183,8 @@ const [activeFilter, setActiveFilter] = useState('Tất cả')
                 <span style={{ fontSize: '11px', fontWeight: '700', color: '#FF4500', letterSpacing: '0.5px' }}>DEAL APP — SĂN DEAL THÔNG MINH</span>
               </div>
               <div style={{ fontSize: '26px', fontWeight: '900', color: '#fff', lineHeight: '1.25', marginBottom: '10px' }}>
-                Đừng mua khi chưa<br />
-                <span style={{ color: '#FF4500' }}>kiểm tra giá tại đây!</span>
+                Deal sốc —<br />
+                <span style={{ color: '#FF4500' }}>Mua thần tốc!</span>
               </div>
               <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.65)', lineHeight: '1.7', marginBottom: '20px' }}>
                 So sánh giá · Lịch sử giá · Cashback nhanh · Cộng đồng deal hunters
