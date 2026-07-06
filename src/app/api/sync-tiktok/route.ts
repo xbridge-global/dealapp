@@ -6,74 +6,83 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
+const CATEGORIES = [
+  { id: '601352', name: 'Thời trang' },
+  { id: '601364', name: 'Điện tử' },
+  { id: '601353', name: 'Mỹ phẩm' },
+  { id: '601355', name: 'Gia dụng' },
+  { id: '601356', name: 'Thể thao' },
+]
+
+async function fetchProducts(categoryId: string) {
+  const res = await fetch(
+    `https://api.accesstrade.vn/v2/tiktokshop_product_feeds?sort_field=BEST_SELLERS&limit=20&category_id=${categoryId}`,
+    {
+      headers: {
+        'authorization': `Token ${process.env.ACCESSTRADE_API_KEY}`,
+        'content-type': 'application/json',
+        'origin': 'https://pub2.accesstrade.vn',
+        'referer': 'https://pub2.accesstrade.vn/',
+      }
+    }
+  )
+  const json = await res.json()
+  return json.data?.products || []
+}
+
 export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization')
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
+
   try {
-    const res = await fetch(
-      'https://api.accesstrade.vn/v2/tiktokshop_product_feeds?sort_field=BEST_SELLERS&limit=50',
-      {
-        headers: {
-          'authorization': `Token ${process.env.ACCESSTRADE_API_KEY}`,
-          'content-type': 'application/json',
-          'origin': 'https://pub2.accesstrade.vn',
-          'referer': 'https://pub2.accesstrade.vn/',
-        }
-      }
-    )
+    let totalInserted = 0
+    let totalFetched = 0
 
-    const json = await res.json()
-    if (!json.status || !json.data?.products) {
-      return NextResponse.json({ error: 'Không lấy được sản phẩm', detail: json }, { status: 400 })
-    }
+    for (const cat of CATEGORIES) {
+      const products = await fetchProducts(cat.id)
+      totalFetched += products.length
 
-    const products = json.data.products
-    let inserted = 0
-    let errors = []
+      for (const p of products) {
+        const price = parseInt(p.sales_price?.minimum_amount || '0')
+        const original = parseInt(p.original_price?.minimum_amount || '0')
+        if (!price || price <= 0) continue
 
-    for (const p of products) {
-      const price = parseInt(p.sales_price?.minimum_amount || '0')
-      const original = parseInt(p.original_price?.minimum_amount || '0')
-      if (!price || price <= 0) continue
+        const finalOriginal = original > price ? original : Math.round(price * 1.3)
+        const discount = Math.round((1 - price / finalOriginal) * 100)
 
-      const finalOriginal = original > price ? original : Math.round(price * 1.3)
-      const discount = Math.round((1 - price / finalOriginal) * 100)
+        const { data: product, error: pErr } = await supabase
+          .from('products')
+          .insert({
+            name: p.title?.slice(0, 200),
+            image_url: p.main_image_url,
+            platform: 'TikTok Shop',
+            product_url: p.detail_link,
+            affiliate_url: p.detail_link,
+            category: cat.name,
+          })
+          .select()
+          .single()
 
-      const { data: product, error: pErr } = await supabase
-        .from('products')
-        .insert({
-          name: p.title?.slice(0, 200),
-          image_url: p.main_image_url,
-          platform: 'TikTok Shop',
-          product_url: p.detail_link,
-          affiliate_url: p.detail_link,
-          category: p.category_chains?.[0]?.local_name || 'Thời trang',
+        if (pErr || !product) continue
+
+        await supabase.from('deals').insert({
+          product_id: product.id,
+          current_price: price,
+          original_price: finalOriginal,
+          discount_percent: discount,
+          is_active: true,
         })
-        .select()
-        .single()
 
-      if (pErr || !product) {
-        errors.push(pErr?.message)
-        continue
+        await supabase.from('price_history').insert({
+          product_id: product.id,
+          price: price,
+          recorded_at: new Date().toISOString(),
+        })
+
+        totalInserted++
       }
-
-      await supabase.from('deals').insert({
-        product_id: product.id,
-        current_price: price,
-        original_price: finalOriginal,
-        discount_percent: discount,
-        is_active: true,
-      })
-
-      await supabase.from('price_history').insert({
-        product_id: product.id,
-        price: price,
-        recorded_at: new Date().toISOString(),
-      })
-
-      inserted++
     }
 
     // Kiểm tra watchlist và gửi alert
@@ -103,7 +112,7 @@ export async function GET(request: Request) {
       }
     }
 
-    return NextResponse.json({ success: true, inserted, total: products.length, alertsSent, errors: errors.slice(0, 3) })
+    return NextResponse.json({ success: true, totalInserted, totalFetched, alertsSent })
 
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 })
