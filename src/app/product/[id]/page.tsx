@@ -176,10 +176,10 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
       <WatchlistButton productId={product?.id} />
 
       <div style={{ padding: '0 16px 24px' }}>
-        <a href={product?.affiliate_url || product?.product_url || '#'} target="_blank" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', backgroundColor: '#FF4500', borderRadius: '14px', padding: '16px', textDecoration: 'none' }}>
-          <span style={{ fontSize: '15px', fontWeight: '800', color: '#fff' }}>Mua ngay trên {product?.platform}</span>
-          <span style={{ color: '#fff', fontSize: '18px' }}>→</span>
-        </a>
+        <BuyButton 
+          productUrl={product?.product_url || '#'}
+          platform={product?.platform}
+        />
         <p style={{ fontSize: '11px', color: '#aaa', textAlign: 'center', marginTop: '10px', lineHeight: '1.6', padding: '0 8px' }}>
           🤝 DealApp sử dụng liên kết tiếp thị liên kết. Khi bạn mua hàng qua link này, chúng tôi có thể nhận được hoa hồng từ sàn TMĐT — không phát sinh thêm chi phí cho bạn.
         </p>
