@@ -3,7 +3,6 @@ import { supabase } from '@/lib/supabase'
 export default async function sitemap() {
   const baseUrl = 'https://dealapp.vn'
 
-  // Lấy tất cả sản phẩm
   const { data: products } = await supabase
     .from('products')
     .select('id, created_at')
