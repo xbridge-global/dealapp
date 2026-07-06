@@ -13,76 +13,77 @@ function detectCategory(name: string): string {
   if (n.includes('điện thoại') || n.includes('laptop') || n.includes('tai nghe') || n.includes('sạc') || n.includes('cáp') || n.includes('bluetooth') || n.includes('iphone') || n.includes('samsung') || n.includes('xiaomi') || n.includes('airpod')) return 'Điện tử'
   if (n.includes('nồi') || n.includes('chảo') || n.includes('máy lọc') || n.includes('máy xay') || n.includes('ấm') || n.includes('bình') || n.includes('khăn') || n.includes('gối') || n.includes('chăn') || n.includes('đèn')) return 'Gia dụng'
   if (n.includes('tập') || n.includes('gym') || n.includes('yoga') || n.includes('bóng') || n.includes('vợt') || n.includes('xe đạp') || n.includes('chạy') || n.includes('thể thao')) return 'Thể thao'
-  if (n.includes('bút') || n.includes('vở') || n.includes('sách') || n.includes('đồ chơi') || n.includes('búp bê') || n.includes('lego')) return 'Văn phòng phẩm'
-  if (n.includes('thực phẩm') || n.includes('snack') || n.includes('bánh') || n.includes('kẹo') || n.includes('cà phê') || n.includes('trà')) return 'Thực phẩm'
   return 'Khác'
 }
 
+const SORT_FIELDS = ['BEST_SELLERS', 'COMMISSION', 'NEW']
+
 export async function GET() {
   try {
-    const res = await fetch(
-      'https://api.accesstrade.vn/v2/tiktokshop_product_feeds?sort_field=BEST_SELLERS&limit=50',
-      {
-        headers: {
-          'authorization': `Token ${process.env.ACCESSTRADE_API_KEY}`,
-          'content-type': 'application/json',
-          'origin': 'https://pub2.accesstrade.vn',
-          'referer': 'https://pub2.accesstrade.vn/',
-        }
-      }
-    )
-
-    const json = await res.json()
-    if (!json.status || !json.data?.products) {
-      return NextResponse.json({ error: 'Không lấy được sản phẩm', detail: json }, { status: 400 })
-    }
-
-    const products = json.data.products
     let inserted = 0
-    let errors = []
+    let errors: string[] = []
 
-    for (const p of products) {
-      const price = parseInt(p.sales_price?.minimum_amount || '0')
-      const original = parseInt(p.original_price?.minimum_amount || '0')
-      if (!price || price <= 0) continue
+    for (const sortField of SORT_FIELDS) {
+      const res = await fetch(
+        `https://api.accesstrade.vn/v2/tiktokshop_product_feeds?sort_field=${sortField}&limit=50`,
+        {
+          headers: {
+            'authorization': `Token ${process.env.ACCESSTRADE_API_KEY}`,
+            'content-type': 'application/json',
+            'origin': 'https://pub2.accesstrade.vn',
+            'referer': 'https://pub2.accesstrade.vn/',
+          }
+        }
+      )
 
-      const finalOriginal = original > price ? original : Math.round(price * 1.3)
-      const discount = Math.round((1 - price / finalOriginal) * 100)
-      const category = detectCategory(p.title || '')
+      const json = await res.json()
+      if (!json.status || !json.data?.products) continue
 
-      const { data: product, error: pErr } = await supabase
-        .from('products')
-        .insert({
-          name: p.title?.slice(0, 200),
-          image_url: p.main_image_url,
-          platform: 'TikTok Shop',
-          product_url: p.detail_link,
-          affiliate_url: p.detail_link,
-          category,
+      const products = json.data.products
+
+      for (const p of products) {
+        const price = parseInt(p.sales_price?.minimum_amount || '0')
+        const original = parseInt(p.original_price?.minimum_amount || '0')
+        if (!price || price <= 0) continue
+
+        const finalOriginal = original > price ? original : Math.round(price * 1.3)
+        const discount = Math.round((1 - price / finalOriginal) * 100)
+        const category = detectCategory(p.title || '')
+
+        const { data: product, error: pErr } = await supabase
+          .from('products')
+          .insert({
+            name: p.title?.slice(0, 200),
+            image_url: p.main_image_url,
+            platform: 'TikTok Shop',
+            product_url: p.detail_link,
+            affiliate_url: p.detail_link,
+            category,
+          })
+          .select()
+          .single()
+
+        if (pErr || !product) {
+          errors.push(pErr?.message || '')
+          continue
+        }
+
+        await supabase.from('deals').insert({
+          product_id: product.id,
+          current_price: price,
+          original_price: finalOriginal,
+          discount_percent: discount,
+          is_active: true,
         })
-        .select()
-        .single()
 
-      if (pErr || !product) {
-        errors.push(pErr?.message)
-        continue
+        await supabase.from('price_history').insert({
+          product_id: product.id,
+          price: price,
+          recorded_at: new Date().toISOString(),
+        })
+
+        inserted++
       }
-
-      await supabase.from('deals').insert({
-        product_id: product.id,
-        current_price: price,
-        original_price: finalOriginal,
-        discount_percent: discount,
-        is_active: true,
-      })
-
-      await supabase.from('price_history').insert({
-        product_id: product.id,
-        price: price,
-        recorded_at: new Date().toISOString(),
-      })
-
-      inserted++
     }
 
     // Kiểm tra watchlist và gửi alert
@@ -112,7 +113,7 @@ export async function GET() {
       }
     }
 
-    return NextResponse.json({ success: true, inserted, total: products.length, alertsSent, errors: errors.slice(0, 3) })
+    return NextResponse.json({ success: true, inserted, alertsSent, errors: errors.slice(0, 3) })
 
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 })
