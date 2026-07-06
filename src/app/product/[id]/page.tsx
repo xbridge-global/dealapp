@@ -159,6 +159,9 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
           <span style={{ fontSize: '15px', fontWeight: '800', color: '#fff' }}>Mua ngay trên {product?.platform}</span>
           <span style={{ color: '#fff', fontSize: '18px' }}>→</span>
         </a>
+        <p style={{ fontSize: '11px', color: '#aaa', textAlign: 'center', marginTop: '10px', lineHeight: '1.6', padding: '0 8px' }}>
+          🤝 DealApp sử dụng liên kết tiếp thị liên kết. Khi bạn mua hàng qua link này, chúng tôi có thể nhận được hoa hồng từ sàn TMĐT — không phát sinh thêm chi phí cho bạn.
+        </p>
       </div>
 
     </main>
