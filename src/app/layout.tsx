@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'DealApp — Săn deal thông minh',
   description: 'Tổng hợp deal từ Shopee, Lazada, TikTok Shop. Theo dõi giá, nhận thông báo khi giảm giá.',
+  verification: {
+    google: 'YY5WSioo_azJwul3KzMRr0lrMZOtmenu2DinZQ7cWrg',
+  },
 }
 
 export default function RootLayout({
