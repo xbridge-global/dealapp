@@ -76,7 +76,34 @@ export async function GET(request: Request) {
       inserted++
     }
 
-    return NextResponse.json({ success: true, inserted, total: products.length, errors: errors.slice(0, 3) })
+    // Kiểm tra watchlist và gửi alert
+    const { data: watchlistItems } = await supabase
+      .from('watchlist')
+      .select('*, products(*), deals(*)')
+
+    let alertsSent = 0
+    if (watchlistItems) {
+      for (const item of watchlistItems) {
+        const deal = item.deals?.[0]
+        if (!deal || !item.target_price || !item.email) continue
+        if (deal.current_price <= item.target_price) {
+          await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/send-alert`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: item.email,
+              productName: item.products?.name,
+              currentPrice: deal.current_price,
+              targetPrice: item.target_price,
+              productUrl: `${process.env.NEXT_PUBLIC_APP_URL}/product/${item.product_id}`,
+            })
+          })
+          alertsSent++
+        }
+      }
+    }
+
+    return NextResponse.json({ success: true, inserted, total: products.length, alertsSent, errors: errors.slice(0, 3) })
 
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 })
