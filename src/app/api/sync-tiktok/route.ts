@@ -9,7 +9,7 @@ const supabase = createClient(
 export async function GET() {
   try {
     const res = await fetch(
-      'https://api.accesstrade.vn/v2/tiktokshop_product_feeds?sort_field=BEST_SELLERS&limit=20',
+      'https://api.accesstrade.vn/v2/tiktokshop_product_feeds?sort_field=BEST_SELLERS&limit=50',
       {
         headers: {
           'authorization': `Token ${process.env.ACCESSTRADE_API_KEY}`,
@@ -26,14 +26,53 @@ export async function GET() {
     }
 
     const products = json.data.products
+    let inserted = 0
+    let errors = []
 
-    // DEBUG: trả về sản phẩm đầu tiên để xem cấu trúc
-    return NextResponse.json({
-      debug: true,
-      total: products.length,
-      sample: products[0],
-      keys: Object.keys(products[0] || {})
-    })
+    for (const p of products) {
+      const price = parseInt(p.sales_price?.minimum_amount || '0')
+      const original = parseInt(p.original_price?.minimum_amount || '0')
+      if (!price || price <= 0) continue
+
+      const finalOriginal = original > price ? original : Math.round(price * 1.3)
+      const discount = Math.round((1 - price / finalOriginal) * 100)
+
+      const { data: product, error: pErr } = await supabase
+        .from('products')
+        .insert({
+          name: p.title?.slice(0, 200),
+          image_url: p.main_image_url,
+          platform: 'TikTok Shop',
+          product_url: p.detail_link,
+          affiliate_url: p.detail_link,
+          category: p.category_chains?.[0]?.local_name || 'Thời trang',
+        })
+        .select()
+        .single()
+
+      if (pErr || !product) {
+        errors.push(pErr?.message)
+        continue
+      }
+
+      await supabase.from('deals').insert({
+        product_id: product.id,
+        current_price: price,
+        original_price: finalOriginal,
+        discount_percent: discount,
+        is_active: true,
+      })
+
+      await supabase.from('price_history').insert({
+        product_id: product.id,
+        price: price,
+        recorded_at: new Date().toISOString(),
+      })
+
+      inserted++
+    }
+
+    return NextResponse.json({ success: true, inserted, total: products.length, errors: errors.slice(0, 3) })
 
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 })
