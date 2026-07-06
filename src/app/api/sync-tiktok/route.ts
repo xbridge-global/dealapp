@@ -21,7 +21,7 @@ function detectCategory(name: string): string {
 export async function GET() {
   try {
     const res = await fetch(
-      'https://api.accesstrade.vn/v2/tiktokshop_product_feeds?sort_field=BEST_SELLERS&limit=100',
+      'https://api.accesstrade.vn/v2/tiktokshop_product_feeds?sort_field=BEST_SELLERS&limit=50',
       {
         headers: {
           'authorization': `Token ${process.env.ACCESSTRADE_API_KEY}`,
