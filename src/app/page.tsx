@@ -316,7 +316,7 @@ const [activeFilter, setActiveFilter] = useState('Tất cả')
                 </a>
         )
       })}
-  }
+      
 </div>
 
           {/* Sàn TMĐT */}
