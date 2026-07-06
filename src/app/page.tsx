@@ -69,10 +69,30 @@ function SkeletonCard() {
 }
 export default function Home() {
   const [deals, setDeals] = useState<any[]>([])
-const [loading, setLoading] = useState(true)
-const [search, setSearch] = useState('')
-const [activeFilter, setActiveFilter] = useState('Tất cả')
+  const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
+  const [activeFilter, setActiveFilter] = useState('Tất cả')
+  const [showInstallBanner, setShowInstallBanner] = useState(false)
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
   const countdown = useCountdown()
+
+  useEffect(() => {
+    const handler = (e: any) => {
+      e.preventDefault()
+      setDeferredPrompt(e)
+      setShowInstallBanner(true)
+    }
+    window.addEventListener('beforeinstallprompt', handler)
+    return () => window.removeEventListener('beforeinstallprompt', handler)
+  }, [])
+
+  async function handleInstall() {
+    if (!deferredPrompt) return
+    deferredPrompt.prompt()
+    await deferredPrompt.userChoice
+    setShowInstallBanner(false)
+    setDeferredPrompt(null)
+  }
 
   useEffect(() => {
     async function load() {
@@ -126,6 +146,17 @@ const [activeFilter, setActiveFilter] = useState('Tất cả')
   return (
     <main style={{ backgroundColor: '#f7f6f2', minHeight: '100vh' }}>
   <style>{skeletonCSS}</style>
+  {showInstallBanner && (
+    <div style={{ position: 'fixed', bottom: '16px', left: '16px', right: '16px', backgroundColor: '#111', borderRadius: '16px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px', zIndex: 999, boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}>
+      <div style={{ width: '40px', height: '40px', backgroundColor: '#FF4500', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: '800', fontSize: '20px', flexShrink: 0 }}>D</div>
+      <div style={{ flex: 1 }}>
+        <div style={{ fontSize: '13px', fontWeight: '700', color: '#fff' }}>Thêm DealApp vào màn hình</div>
+        <div style={{ fontSize: '11px', color: '#aaa' }}>Nhận deal alert ngay khi có giảm giá!</div>
+      </div>
+      <button onClick={handleInstall} style={{ backgroundColor: '#FF4500', color: '#fff', border: 'none', borderRadius: '10px', padding: '8px 14px', fontSize: '12px', fontWeight: '700', cursor: 'pointer', flexShrink: 0 }}>Cài ngay</button>
+      <button onClick={() => setShowInstallBanner(false)} style={{ backgroundColor: 'transparent', color: '#666', border: 'none', fontSize: '18px', cursor: 'pointer', flexShrink: 0 }}>✕</button>
+    </div>
+  )}
   <div style={{ backgroundColor: '#111', position: 'sticky', top: 0, zIndex: 100 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', height: '64px', padding: '0 24px' }}>
           <a href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
