@@ -29,7 +29,25 @@ function getEmoji(name: string) {
   if (name?.includes('Máy lọc')) return '💨'
   return '🛍️'
 }
-
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const deal = await getProduct(id)
+  if (!deal) return { title: 'Sản phẩm | DealApp' }
+  const product = deal.products as any
+  const discount = deal.discount_percent
+  const price = deal.current_price?.toLocaleString('vi-VN')
+  return {
+    title: `${product?.name} - Giảm ${discount}% chỉ còn ${price}đ | DealApp`,
+    description: `Mua ${product?.name} giá tốt nhất trên ${product?.platform}. Giảm ${discount}% còn ${price}đ. Xem lịch sử giá và đặt Deal Alert tại DealApp.`,
+    openGraph: {
+      title: `${product?.name} - Giảm ${discount}%`,
+      description: `Chỉ còn ${price}đ trên ${product?.platform}`,
+      url: `https://dealapp.vn/product/${id}`,
+      siteName: 'DealApp',
+      images: product?.image_url ? [{ url: product.image_url }] : [],
+    },
+  }
+}
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const deal = await getProduct(id)
