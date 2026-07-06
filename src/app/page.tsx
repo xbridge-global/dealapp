@@ -47,22 +47,44 @@ const diff = Math.max(0, Math.floor((end.getTime() - vnNow.getTime()) / 1000))
   }, [])
   return time
 }
+const skeletonCSS = `
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+`
 
+function SkeletonCard() {
+  return (
+    <div style={{ backgroundColor: '#fff', borderRadius: '16px', border: '0.5px solid #e5e4e0', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ aspectRatio: '1', backgroundColor: '#f0f0f0', animation: 'pulse 1.5s ease-in-out infinite' }} />
+      <div style={{ padding: '10px 12px 14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div style={{ height: '10px', width: '50%', backgroundColor: '#f0f0f0', borderRadius: '4px', animation: 'pulse 1.5s ease-in-out infinite' }} />
+        <div style={{ height: '12px', width: '90%', backgroundColor: '#f0f0f0', borderRadius: '4px', animation: 'pulse 1.5s ease-in-out infinite' }} />
+        <div style={{ height: '12px', width: '70%', backgroundColor: '#f0f0f0', borderRadius: '4px', animation: 'pulse 1.5s ease-in-out infinite' }} />
+        <div style={{ height: '16px', width: '40%', backgroundColor: '#f0f0f0', borderRadius: '4px', marginTop: '4px', animation: 'pulse 1.5s ease-in-out infinite' }} />
+      </div>
+    </div>
+  )
+}
 export default function Home() {
   const [deals, setDeals] = useState<any[]>([])
-  const [search, setSearch] = useState('')
-  const [activeFilter, setActiveFilter] = useState('Tất cả')
+const [loading, setLoading] = useState(true)
+const [search, setSearch] = useState('')
+const [activeFilter, setActiveFilter] = useState('Tất cả')
   const countdown = useCountdown()
 
   useEffect(() => {
     async function load() {
-      const { data } = await supabase
-        .from('deals')
-        .select('*, products (*)')
-        .eq('is_active', true)
-        .order('discount_percent', { ascending: false })
-      setDeals(data || [])
-    }
+  setLoading(true)
+  const { data } = await supabase
+    .from('deals')
+    .select('*, products (*)')
+    .eq('is_active', true)
+    .order('discount_percent', { ascending: false })
+  setDeals(data || [])
+  setLoading(false)
+}
     load()
   }, [])
 
@@ -103,7 +125,8 @@ export default function Home() {
 
   return (
     <main style={{ backgroundColor: '#f7f6f2', minHeight: '100vh' }}>
-      <div style={{ backgroundColor: '#111', position: 'sticky', top: 0, zIndex: 100 }}>
+  <style>{skeletonCSS}</style>
+  <div style={{ backgroundColor: '#111', position: 'sticky', top: 0, zIndex: 100 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', height: '64px', padding: '0 24px' }}>
           <a href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
             <div style={{ width: '32px', height: '32px', backgroundColor: '#FF4500', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: '800', fontSize: '16px' }}>D</div>
@@ -178,9 +201,11 @@ export default function Home() {
           )}
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '14px' }}>
-            {filtered.map((deal: any) => {
-              const ps = getPlatformColor(deal.products?.platform)
-              return (
+  {loading
+    ? Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)
+    : filtered.map((deal: any) => {
+    const ps = getPlatformColor(deal.products?.platform)
+    return (
                 <a key={deal.id} href={'/product/' + deal.product_id}
                   style={{ backgroundColor: '#fff', borderRadius: '16px', border: '0.5px solid #e5e4e0', textDecoration: 'none', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
                   onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.1)')}
@@ -289,9 +314,10 @@ export default function Home() {
                     <span style={{ fontSize: '10px', fontWeight: '700', color: ps.color, backgroundColor: ps.bg, padding: '1px 5px', borderRadius: '3px' }}>-{deal.discount_percent}%</span>
                   </div>
                 </a>
-              )
-            })}
-          </div>
+        )
+      })}
+  }
+</div>
 
           {/* Sàn TMĐT */}
           <div style={{ backgroundColor: '#fff', borderRadius: '16px', border: '0.5px solid #e5e4e0', overflow: 'hidden' }}>
