@@ -16,7 +16,7 @@ function detectCategory(name: string): string {
   return 'Khác'
 }
 
-const SORT_FIELDS = ['BEST_SELLERS', 'COMMISSION', 'NEW']
+const SORT_FIELDS = ['BEST_SELLERS', 'COMMISSION', 'NEW', 'DISCOUNT']
 
 export async function GET() {
   try {
