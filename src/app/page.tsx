@@ -173,47 +173,47 @@ const [activeFilter, setActiveFilter] = useState('Tất cả')
         {/* Main content */}
         <div style={{ flex: 1, minWidth: 0 }}>
 
-          {/* Hero Section */}
-          <div style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)', borderRadius: '20px', padding: '32px 28px', marginBottom: '20px', position: 'relative', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '180px', height: '180px', backgroundColor: 'rgba(255,69,0,0.15)', borderRadius: '50%' }} />
-            <div style={{ position: 'absolute', bottom: '-40px', right: '60px', width: '120px', height: '120px', backgroundColor: 'rgba(255,69,0,0.1)', borderRadius: '50%' }} />
-            <div style={{ position: 'relative', zIndex: 1 }}>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', backgroundColor: 'rgba(255,69,0,0.2)', border: '1px solid rgba(255,69,0,0.4)', borderRadius: '20px', padding: '4px 12px', marginBottom: '14px' }}>
+          {/* Hero + Flash Sale gộp */}
+          <div style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)', borderRadius: '20px', padding: '28px', marginBottom: '20px', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '20px' }}>
+            <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '180px', height: '180px', backgroundColor: 'rgba(255,69,0,0.12)', borderRadius: '50%' }} />
+            <div style={{ position: 'absolute', bottom: '-40px', right: '60px', width: '120px', height: '120px', backgroundColor: 'rgba(255,69,0,0.08)', borderRadius: '50%' }} />
+
+            {/* Bên trái — Slogan */}
+            <div style={{ position: 'relative', zIndex: 1, flex: 1 }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', backgroundColor: 'rgba(255,69,0,0.2)', border: '1px solid rgba(255,69,0,0.4)', borderRadius: '20px', padding: '4px 12px', marginBottom: '12px' }}>
                 <span style={{ fontSize: '12px' }}>🔥</span>
                 <span style={{ fontSize: '11px', fontWeight: '700', color: '#FF4500', letterSpacing: '0.5px' }}>DEAL APP — SĂN DEAL THÔNG MINH</span>
               </div>
-              <div style={{ fontSize: '26px', fontWeight: '900', color: '#fff', lineHeight: '1.25', marginBottom: '10px' }}>
+              <div style={{ fontSize: '26px', fontWeight: '900', color: '#fff', lineHeight: '1.25', marginBottom: '8px' }}>
                 Deal sốc —<br />
                 <span style={{ color: '#FF4500' }}>Mua thần tốc!</span>
               </div>
-              <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.65)', lineHeight: '1.7', marginBottom: '20px' }}>
-                So sánh giá · Lịch sử giá · Cashback nhanh · Cộng đồng deal hunters
+              <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.55)', lineHeight: '1.6', marginBottom: '16px' }}>
+                So sánh giá · Lịch sử giá · Cashback nhanh · Cộng đồng
               </div>
               <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                <a href="/alerts" style={{ backgroundColor: '#FF4500', color: '#fff', padding: '10px 20px', borderRadius: '20px', fontWeight: '700', fontSize: '13px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                <a href="/alerts" style={{ backgroundColor: '#FF4500', color: '#fff', padding: '9px 18px', borderRadius: '20px', fontWeight: '700', fontSize: '13px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                   <span>🔔</span> Đặt Deal Alert
                 </a>
-                <a href="/community" style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: '#fff', padding: '10px 20px', borderRadius: '20px', fontWeight: '700', fontSize: '13px', textDecoration: 'none', border: '1px solid rgba(255,255,255,0.2)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                <a href="/community" style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: '#fff', padding: '9px 18px', borderRadius: '20px', fontWeight: '700', fontSize: '13px', textDecoration: 'none', border: '1px solid rgba(255,255,255,0.2)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                   <span>👥</span> Cộng đồng
                 </a>
               </div>
             </div>
-          </div>
 
-          <div style={{ background: 'linear-gradient(135deg, #FF4500 0%, #ff6b35 100%)', borderRadius: '18px', padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-            <div>
-              <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)', fontWeight: '700', letterSpacing: '1px', marginBottom: '4px' }}>FLASH SALE</div>
-              <div style={{ fontSize: '20px', fontWeight: '800', color: '#fff', marginBottom: '10px' }}>Deal sốc hôm nay</div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            {/* Bên phải — Flash Sale countdown */}
+            <div style={{ position: 'relative', zIndex: 1, flexShrink: 0, backgroundColor: 'rgba(255,69,0,0.15)', border: '1px solid rgba(255,69,0,0.3)', borderRadius: '16px', padding: '16px 20px', textAlign: 'center' }}>
+              <div style={{ fontSize: '10px', color: '#FF4500', fontWeight: '800', letterSpacing: '1.5px', marginBottom: '6px' }}>⚡ FLASH SALE</div>
+              <div style={{ fontSize: '13px', fontWeight: '700', color: 'rgba(255,255,255,0.8)', marginBottom: '10px' }}>Deal sốc hôm nay</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'center' }}>
                 {[countdown.h, countdown.m, countdown.s].map((t, i) => (
                   <span key={i} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span style={{ backgroundColor: 'rgba(0,0,0,0.25)', color: '#fff', padding: '4px 10px', borderRadius: '6px', fontSize: '18px', fontWeight: '800' }}>{t}</span>
-                    {i < 2 && <span style={{ color: 'rgba(255,255,255,0.7)', fontWeight: '700', fontSize: '18px' }}>:</span>}
+                    <span style={{ backgroundColor: 'rgba(0,0,0,0.4)', color: '#fff', padding: '6px 10px', borderRadius: '8px', fontSize: '20px', fontWeight: '800', minWidth: '36px', display: 'inline-block', textAlign: 'center' }}>{t}</span>
+                    {i < 2 && <span style={{ color: 'rgba(255,255,255,0.5)', fontWeight: '700', fontSize: '18px' }}>:</span>}
                   </span>
                 ))}
               </div>
             </div>
-            <span style={{ fontSize: '56px' }}>🔥</span>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
