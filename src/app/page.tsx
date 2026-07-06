@@ -172,6 +172,34 @@ const [activeFilter, setActiveFilter] = useState('Tất cả')
 
         {/* Main content */}
         <div style={{ flex: 1, minWidth: 0 }}>
+
+          {/* Hero Section */}
+          <div style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)', borderRadius: '20px', padding: '32px 28px', marginBottom: '20px', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '180px', height: '180px', backgroundColor: 'rgba(255,69,0,0.15)', borderRadius: '50%' }} />
+            <div style={{ position: 'absolute', bottom: '-40px', right: '60px', width: '120px', height: '120px', backgroundColor: 'rgba(255,69,0,0.1)', borderRadius: '50%' }} />
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', backgroundColor: 'rgba(255,69,0,0.2)', border: '1px solid rgba(255,69,0,0.4)', borderRadius: '20px', padding: '4px 12px', marginBottom: '14px' }}>
+                <span style={{ fontSize: '12px' }}>🔥</span>
+                <span style={{ fontSize: '11px', fontWeight: '700', color: '#FF4500', letterSpacing: '0.5px' }}>DEAL APP — SĂN DEAL THÔNG MINH</span>
+              </div>
+              <div style={{ fontSize: '26px', fontWeight: '900', color: '#fff', lineHeight: '1.25', marginBottom: '10px' }}>
+                Đừng mua khi chưa<br />
+                <span style={{ color: '#FF4500' }}>kiểm tra giá tại đây!</span>
+              </div>
+              <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.65)', lineHeight: '1.7', marginBottom: '20px' }}>
+                So sánh giá · Lịch sử giá · Cashback nhanh · Cộng đồng deal hunters
+              </div>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                <a href="/alerts" style={{ backgroundColor: '#FF4500', color: '#fff', padding: '10px 20px', borderRadius: '20px', fontWeight: '700', fontSize: '13px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                  <span>🔔</span> Đặt Deal Alert
+                </a>
+                <a href="/community" style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: '#fff', padding: '10px 20px', borderRadius: '20px', fontWeight: '700', fontSize: '13px', textDecoration: 'none', border: '1px solid rgba(255,255,255,0.2)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                  <span>👥</span> Cộng đồng
+                </a>
+              </div>
+            </div>
+          </div>
+
           <div style={{ background: 'linear-gradient(135deg, #FF4500 0%, #ff6b35 100%)', borderRadius: '18px', padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
             <div>
               <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)', fontWeight: '700', letterSpacing: '1px', marginBottom: '4px' }}>FLASH SALE</div>
@@ -316,7 +344,7 @@ const [activeFilter, setActiveFilter] = useState('Tất cả')
                 </a>
         )
       })}
-      
+
 </div>
 
           {/* Sàn TMĐT */}
