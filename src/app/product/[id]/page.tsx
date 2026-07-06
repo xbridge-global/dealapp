@@ -53,7 +53,28 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   const deal = await getProduct(id)
   const history = await getPriceHistory(id)
 
-  if (!deal) return <div style={{ padding: '20px' }}>Không tìm thấy sản phẩm</div>
+  if (!deal) return (
+  <main style={{ backgroundColor: '#f7f6f2', minHeight: '100vh' }}>
+    <div style={{ backgroundColor: '#f7f6f2', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <a href="/" style={{ width: '32px', height: '32px', backgroundColor: '#ececea', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', fontSize: '16px' }}>←</a>
+      <span style={{ fontSize: '15px', fontWeight: '700', color: '#111' }}>Chi tiết sản phẩm</span>
+    </div>
+    <div style={{ margin: '0 16px 12px', backgroundColor: '#fff', borderRadius: '16px', border: '0.5px solid #e5e4e0', overflow: 'hidden' }}>
+      <div style={{ height: '200px', backgroundColor: '#f0f0f0' }} />
+      <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <div style={{ height: '12px', width: '40%', backgroundColor: '#f0f0f0', borderRadius: '4px' }} />
+        <div style={{ height: '16px', width: '90%', backgroundColor: '#f0f0f0', borderRadius: '4px' }} />
+        <div style={{ height: '16px', width: '70%', backgroundColor: '#f0f0f0', borderRadius: '4px' }} />
+        <div style={{ height: '24px', width: '35%', backgroundColor: '#f0f0f0', borderRadius: '4px', marginTop: '8px' }} />
+      </div>
+    </div>
+    <div style={{ textAlign: 'center', padding: '40px', color: '#aaa' }}>
+      <div style={{ fontSize: '40px', marginBottom: '8px' }}>😔</div>
+      <div style={{ fontSize: '14px', fontWeight: '600' }}>Không tìm thấy sản phẩm</div>
+      <a href="/" style={{ display: 'inline-block', marginTop: '16px', backgroundColor: '#FF4500', color: '#fff', padding: '10px 24px', borderRadius: '20px', textDecoration: 'none', fontWeight: '700', fontSize: '13px' }}>Về trang chủ</a>
+    </div>
+  </main>
+)
 
   const product = deal.products as any
   const lowestPrice = history.length > 0 ? Math.min(...history.map((h: any) => h.price)) : deal.current_price
