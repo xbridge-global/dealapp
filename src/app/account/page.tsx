@@ -6,6 +6,8 @@ import { supabase } from '@/lib/supabase'
 export default function AccountPage() {
   const [user, setUser] = useState<any>(null)
   const [watchCount, setWatchCount] = useState(0)
+  const [coins, setCoins] = useState(0)
+  const [orderCount, setOrderCount] = useState(0)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -20,6 +22,22 @@ export default function AccountPage() {
         .select('*', { count: 'exact', head: true })
         .eq('user_id', data.user.id)
       setWatchCount(count || 0)
+
+      // Lấy số xu
+      const { data: wallet } = await supabase
+        .from('user_coins')
+        .select('balance')
+        .eq('user_id', data.user.id)
+        .single()
+      setCoins(wallet?.balance || 0)
+
+      // Lấy số đơn hàng
+      const { count: orders } = await supabase
+        .from('orders')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', data.user.id)
+      setOrderCount(orders || 0)
+
       setLoading(false)
     })
   }, [])
@@ -58,7 +76,11 @@ export default function AccountPage() {
           <div style={{ fontSize: '11px', color: '#999', marginTop: '4px' }}>Đang theo dõi</div>
         </div>
         <div style={{ flex: 1, backgroundColor: '#fff', borderRadius: '14px', padding: '16px', border: '0.5px solid #e5e4e0', textAlign: 'center' }}>
-          <div style={{ fontSize: '24px', fontWeight: '800', color: '#1D9E75' }}>0</div>
+          <div style={{ fontSize: '24px', fontWeight: '800', color: '#FFD700' }}>{coins}</div>
+          <div style={{ fontSize: '11px', color: '#999', marginTop: '4px' }}>🪙 Xu tích lũy</div>
+        </div>
+        <div style={{ flex: 1, backgroundColor: '#fff', borderRadius: '14px', padding: '16px', border: '0.5px solid #e5e4e0', textAlign: 'center' }}>
+          <div style={{ fontSize: '24px', fontWeight: '800', color: '#1D9E75' }}>{orderCount}</div>
           <div style={{ fontSize: '11px', color: '#999', marginTop: '4px' }}>Deal đã mua</div>
         </div>
       </div>
