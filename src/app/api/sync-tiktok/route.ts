@@ -50,6 +50,14 @@ export async function GET() {
         const discount = Math.round((1 - price / finalOriginal) * 100)
         const category = detectCategory(p.title || '')
 
+        // Kiểm tra trùng
+        const { data: existing } = await supabase
+          .from('products')
+          .select('id')
+          .eq('product_url', p.detail_link)
+          .single()
+        if (existing) continue
+
         const { data: product, error: pErr } = await supabase
           .from('products')
           .insert({
