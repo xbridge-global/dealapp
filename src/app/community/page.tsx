@@ -2,7 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
-
+function getBadge(votes: number) {
+  if (votes >= 100) return { emoji: '👑', label: 'Deal Master', color: '#FFD700' }
+  if (votes >= 50) return { emoji: '🔥', label: 'Deal Hunter', color: '#FF4500' }
+  if (votes >= 20) return { emoji: '⭐', label: 'Deal Finder', color: '#2F80ED' }
+  if (votes >= 5) return { emoji: '🌱', label: 'Newbie', color: '#1D9E75' }
+  return null
+}
 export default function CommunityPage() {
   const [posts, setPosts] = useState<any[]>([])
   const [leaders, setLeaders] = useState<any[]>([])
@@ -104,7 +110,14 @@ export default function CommunityPage() {
               <div style={{ width: '28px', height: '28px', backgroundColor: i === 0 ? '#FF4500' : '#444', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: '700', color: '#fff' }}>
                 {leader.email?.[0].toUpperCase()}
               </div>
-              <span style={{ fontSize: '11px', color: '#ccc', flex: 1 }}>{leader.email?.split('@')[0]}</span>
+              <div style={{ flex: 1 }}>
+                <span style={{ fontSize: '11px', color: '#ccc' }}>{leader.email?.split('@')[0]}</span>
+                {getBadge(leader.total_votes || 0) && (
+                  <span style={{ marginLeft: '6px', fontSize: '9px', fontWeight: '700', color: getBadge(leader.total_votes || 0)!.color, backgroundColor: 'rgba(255,255,255,0.1)', padding: '1px 5px', borderRadius: '4px' }}>
+                    {getBadge(leader.total_votes || 0)!.emoji} {getBadge(leader.total_votes || 0)!.label}
+                  </span>
+                )}
+              </div>
               <span style={{ fontSize: '11px', fontWeight: '700', color: '#FF4500' }}>{leader.total_votes || 0} votes</span>
             </div>
           ))}
@@ -126,6 +139,17 @@ export default function CommunityPage() {
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                 <span style={{ backgroundColor: '#FFE4DC', color: '#CC2200', fontSize: '9px', padding: '2px 7px', borderRadius: '5px', fontWeight: '700' }}>{post.platform}</span>
                 {post.discount_percent > 0 && <span style={{ backgroundColor: '#EAF3DE', color: '#3B6D11', fontSize: '9px', padding: '2px 7px', borderRadius: '5px', fontWeight: '700' }}>-{post.discount_percent}%</span>}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                <div style={{ width: '20px', height: '20px', backgroundColor: '#FF4500', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px', fontWeight: '700', color: '#fff' }}>
+                  {post.user_id?.[0]?.toUpperCase() || 'U'}
+                </div>
+                <span style={{ fontSize: '10px', color: '#999' }}>Deal Hunter</span>
+                {post.vote_count >= 5 && (
+                  <span style={{ fontSize: '9px', fontWeight: '700', color: getBadge(post.vote_count)?.color, backgroundColor: '#f7f6f2', padding: '1px 5px', borderRadius: '4px' }}>
+                    {getBadge(post.vote_count)?.emoji} {getBadge(post.vote_count)?.label}
+                  </span>
+                )}
               </div>
               <div style={{ fontSize: '13px', fontWeight: '700', color: '#111', marginBottom: '4px' }}>{post.title}</div>
               {post.description && <div style={{ fontSize: '11px', color: '#666', marginBottom: '8px' }}>{post.description}</div>}
