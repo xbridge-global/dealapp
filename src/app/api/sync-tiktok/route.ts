@@ -6,79 +6,83 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-const CATEGORIES = [
-  { id: '601352', name: 'Thời trang' },
-  { id: '601364', name: 'Điện tử' },
-  { id: '601353', name: 'Mỹ phẩm' },
-  { id: '601355', name: 'Gia dụng' },
-  { id: '601356', name: 'Thể thao' },
-]
-
-async function fetchProducts(categoryId: string) {
-  const res = await fetch(
-    `https://api.accesstrade.vn/v2/tiktokshop_product_feeds?sort_field=BEST_SELLERS&limit=20&category_id=${categoryId}`,
-    {
-      headers: {
-        'authorization': `Token ${process.env.ACCESSTRADE_API_KEY}`,
-        'content-type': 'application/json',
-        'origin': 'https://pub2.accesstrade.vn',
-        'referer': 'https://pub2.accesstrade.vn/',
-      }
-    }
-  )
-  const json = await res.json()
-  return json.data?.products || []
+function detectCategory(name: string): string {
+  const n = name?.toLowerCase() || ''
+  if (n.includes('áo') || n.includes('quần') || n.includes('váy') || n.includes('giày') || n.includes('dép') || n.includes('túi') || n.includes('balo') || n.includes('sandal') || n.includes('sneaker') || n.includes('boot')) return 'Thời trang'
+  if (n.includes('son') || n.includes('kem') || n.includes('serum') || n.includes('toner') || n.includes('mặt nạ') || n.includes('nước hoa') || n.includes('mascara') || n.includes('phấn') || n.includes('collagen') || n.includes('dưỡng')) return 'Mỹ phẩm'
+  if (n.includes('điện thoại') || n.includes('laptop') || n.includes('tai nghe') || n.includes('sạc') || n.includes('cáp') || n.includes('bluetooth') || n.includes('iphone') || n.includes('samsung') || n.includes('xiaomi') || n.includes('airpod')) return 'Điện tử'
+  if (n.includes('nồi') || n.includes('chảo') || n.includes('máy lọc') || n.includes('máy xay') || n.includes('ấm') || n.includes('bình') || n.includes('khăn') || n.includes('gối') || n.includes('chăn') || n.includes('đèn')) return 'Gia dụng'
+  if (n.includes('tập') || n.includes('gym') || n.includes('yoga') || n.includes('bóng') || n.includes('vợt') || n.includes('xe đạp') || n.includes('chạy') || n.includes('thể thao')) return 'Thể thao'
+  if (n.includes('bút') || n.includes('vở') || n.includes('sách') || n.includes('đồ chơi') || n.includes('búp bê') || n.includes('lego')) return 'Văn phòng phẩm'
+  if (n.includes('thực phẩm') || n.includes('snack') || n.includes('bánh') || n.includes('kẹo') || n.includes('cà phê') || n.includes('trà')) return 'Thực phẩm'
+  return 'Khác'
 }
 
 export async function GET() {
-
   try {
-    let totalInserted = 0
-    let totalFetched = 0
-
-    for (const cat of CATEGORIES) {
-      const products = await fetchProducts(cat.id)
-      totalFetched += products.length
-
-      for (const p of products) {
-        const price = parseInt(p.sales_price?.minimum_amount || '0')
-        const original = parseInt(p.original_price?.minimum_amount || '0')
-        if (!price || price <= 0) continue
-
-        const finalOriginal = original > price ? original : Math.round(price * 1.3)
-        const discount = Math.round((1 - price / finalOriginal) * 100)
-
-        const { data: product, error: pErr } = await supabase
-          .from('products')
-          .insert({
-            name: p.title?.slice(0, 200),
-            image_url: p.main_image_url,
-            platform: 'TikTok Shop',
-            product_url: p.detail_link,
-            affiliate_url: p.detail_link,
-            category: cat.name,
-          })
-          .select()
-          .single()
-
-        if (pErr || !product) continue
-
-        await supabase.from('deals').insert({
-          product_id: product.id,
-          current_price: price,
-          original_price: finalOriginal,
-          discount_percent: discount,
-          is_active: true,
-        })
-
-        await supabase.from('price_history').insert({
-          product_id: product.id,
-          price: price,
-          recorded_at: new Date().toISOString(),
-        })
-
-        totalInserted++
+    const res = await fetch(
+      'https://api.accesstrade.vn/v2/tiktokshop_product_feeds?sort_field=BEST_SELLERS&limit=100',
+      {
+        headers: {
+          'authorization': `Token ${process.env.ACCESSTRADE_API_KEY}`,
+          'content-type': 'application/json',
+          'origin': 'https://pub2.accesstrade.vn',
+          'referer': 'https://pub2.accesstrade.vn/',
+        }
       }
+    )
+
+    const json = await res.json()
+    if (!json.status || !json.data?.products) {
+      return NextResponse.json({ error: 'Không lấy được sản phẩm', detail: json }, { status: 400 })
+    }
+
+    const products = json.data.products
+    let inserted = 0
+    let errors = []
+
+    for (const p of products) {
+      const price = parseInt(p.sales_price?.minimum_amount || '0')
+      const original = parseInt(p.original_price?.minimum_amount || '0')
+      if (!price || price <= 0) continue
+
+      const finalOriginal = original > price ? original : Math.round(price * 1.3)
+      const discount = Math.round((1 - price / finalOriginal) * 100)
+      const category = detectCategory(p.title || '')
+
+      const { data: product, error: pErr } = await supabase
+        .from('products')
+        .insert({
+          name: p.title?.slice(0, 200),
+          image_url: p.main_image_url,
+          platform: 'TikTok Shop',
+          product_url: p.detail_link,
+          affiliate_url: p.detail_link,
+          category,
+        })
+        .select()
+        .single()
+
+      if (pErr || !product) {
+        errors.push(pErr?.message)
+        continue
+      }
+
+      await supabase.from('deals').insert({
+        product_id: product.id,
+        current_price: price,
+        original_price: finalOriginal,
+        discount_percent: discount,
+        is_active: true,
+      })
+
+      await supabase.from('price_history').insert({
+        product_id: product.id,
+        price: price,
+        recorded_at: new Date().toISOString(),
+      })
+
+      inserted++
     }
 
     // Kiểm tra watchlist và gửi alert
@@ -108,7 +112,7 @@ export async function GET() {
       }
     }
 
-    return NextResponse.json({ success: true, totalInserted, totalFetched, alertsSent })
+    return NextResponse.json({ success: true, inserted, total: products.length, alertsSent, errors: errors.slice(0, 3) })
 
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 })
