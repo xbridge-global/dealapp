@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import WatchlistButton from '@/components/WatchlistButton'
+import BuyButton from '@/components/BuyButton'
 
 async function getProduct(id: string) {
   const { data } = await supabase
