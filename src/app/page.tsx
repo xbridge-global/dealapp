@@ -27,11 +27,10 @@ function useCountdown() {
     function tick() {
       const now = new Date()
       const utc = now.getTime() + now.getTimezoneOffset() * 60000
-const vnNow = new Date(utc + 7 * 3600000)
-const endOfDay = new Date(vnNow)
-endOfDay.setHours(23, 59, 59, 0)
-const end = new Date(endOfDay.getTime() - 7 * 3600000 + now.getTimezoneOffset() * (-60000))
-const diff = Math.max(0, Math.floor((end.getTime() - vnNow.getTime()) / 1000))
+      const vnNow = new Date(utc + 7 * 3600000)
+      const endOfDay = new Date(vnNow)
+      endOfDay.setHours(23, 59, 59, 0)
+      const diff = Math.max(0, Math.floor((endOfDay.getTime() - vnNow.getTime()) / 1000))
       const h = Math.floor(diff / 3600)
       const m = Math.floor((diff % 3600) / 60)
       const s = diff % 60
@@ -47,10 +46,98 @@ const diff = Math.max(0, Math.floor((end.getTime() - vnNow.getTime()) / 1000))
   }, [])
   return time
 }
-const skeletonCSS = `
+
+const globalCSS = `
   @keyframes pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.4; }
+  }
+  .dealapp-layout {
+    display: flex;
+    gap: 20px;
+    padding: 16px 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .dealapp-sidebar {
+    width: 300px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .dealapp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 14px;
+  }
+  .dealapp-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .dealapp-flash-box {
+    flex-shrink: 0;
+    background-color: rgba(255,69,0,0.15);
+    border: 1px solid rgba(255,69,0,0.3);
+    border-radius: 16px;
+    padding: 16px 20px;
+    text-align: center;
+  }
+  .dealapp-footer-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    border-top: 1px solid #222;
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .dealapp-footer-links {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .dealapp-nav-icons {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+  @media (max-width: 768px) {
+    .dealapp-layout {
+      flex-direction: column;
+      padding: 12px 16px;
+    }
+    .dealapp-sidebar {
+      width: 100%;
+      display: none;
+    }
+    .dealapp-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .dealapp-hero {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .dealapp-flash-box {
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .dealapp-footer-inner {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .dealapp-nav-icons {
+      gap: 10px;
+    }
+    .dealapp-nav-icons span {
+      display: none;
+    }
   }
 `
 
@@ -67,6 +154,7 @@ function SkeletonCard() {
     </div>
   )
 }
+
 export default function Home() {
   const [deals, setDeals] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -96,15 +184,15 @@ export default function Home() {
 
   useEffect(() => {
     async function load() {
-  setLoading(true)
-  const { data } = await supabase
-    .from('deals')
-    .select('*, products (*)')
-    .eq('is_active', true)
-    .order('discount_percent', { ascending: false })
-  setDeals(data || [])
-  setLoading(false)
-}
+      setLoading(true)
+      const { data } = await supabase
+        .from('deals')
+        .select('*, products (*)')
+        .eq('is_active', true)
+        .order('discount_percent', { ascending: false })
+      setDeals(data || [])
+      setLoading(false)
+    }
     load()
   }, [])
 
@@ -145,19 +233,21 @@ export default function Home() {
 
   return (
     <main style={{ backgroundColor: '#f7f6f2', minHeight: '100vh' }}>
-  <style>{skeletonCSS}</style>
-  {showInstallBanner && (
-    <div style={{ position: 'fixed', bottom: '16px', left: '16px', right: '16px', backgroundColor: '#111', borderRadius: '16px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px', zIndex: 999, boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}>
-      <div style={{ width: '40px', height: '40px', backgroundColor: '#FF4500', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: '800', fontSize: '20px', flexShrink: 0 }}>D</div>
-      <div style={{ flex: 1 }}>
-        <div style={{ fontSize: '13px', fontWeight: '700', color: '#fff' }}>Thêm DealApp vào màn hình</div>
-        <div style={{ fontSize: '11px', color: '#aaa' }}>Nhận deal alert ngay khi có giảm giá!</div>
-      </div>
-      <button onClick={handleInstall} style={{ backgroundColor: '#FF4500', color: '#fff', border: 'none', borderRadius: '10px', padding: '8px 14px', fontSize: '12px', fontWeight: '700', cursor: 'pointer', flexShrink: 0 }}>Cài ngay</button>
-      <button onClick={() => setShowInstallBanner(false)} style={{ backgroundColor: 'transparent', color: '#666', border: 'none', fontSize: '18px', cursor: 'pointer', flexShrink: 0 }}>✕</button>
-    </div>
-  )}
-  <div style={{ backgroundColor: '#111', position: 'sticky', top: 0, zIndex: 100 }}>
+      <style>{globalCSS}</style>
+
+      {showInstallBanner && (
+        <div style={{ position: 'fixed', bottom: '16px', left: '16px', right: '16px', backgroundColor: '#111', borderRadius: '16px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px', zIndex: 999, boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}>
+          <div style={{ width: '40px', height: '40px', backgroundColor: '#FF4500', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: '800', fontSize: '20px', flexShrink: 0 }}>D</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: '13px', fontWeight: '700', color: '#fff' }}>Thêm DealApp vào màn hình</div>
+            <div style={{ fontSize: '11px', color: '#aaa' }}>Nhận deal alert ngay khi có giảm giá!</div>
+          </div>
+          <button onClick={handleInstall} style={{ backgroundColor: '#FF4500', color: '#fff', border: 'none', borderRadius: '10px', padding: '8px 14px', fontSize: '12px', fontWeight: '700', cursor: 'pointer', flexShrink: 0 }}>Cài ngay</button>
+          <button onClick={() => setShowInstallBanner(false)} style={{ backgroundColor: 'transparent', color: '#666', border: 'none', fontSize: '18px', cursor: 'pointer', flexShrink: 0 }}>✕</button>
+        </div>
+      )}
+
+      <div style={{ backgroundColor: '#111', position: 'sticky', top: 0, zIndex: 100 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', height: '64px', padding: '0 24px' }}>
           <a href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
             <div style={{ width: '32px', height: '32px', backgroundColor: '#FF4500', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: '800', fontSize: '16px' }}>D</div>
@@ -173,7 +263,7 @@ export default function Home() {
               style={{ width: '100%', padding: '10px 16px 10px 42px', backgroundColor: '#fff', border: 'none', borderRadius: '24px', fontSize: '14px', color: '#111', outline: 'none', boxSizing: 'border-box' }}
             />
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexShrink: 0 }}>
+          <div className="dealapp-nav-icons">
             <a href="/alerts" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
               <div style={{ width: '40px', height: '40px', backgroundColor: '#FF4500', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>🔔</div>
               <span style={{ fontSize: '10px', color: '#aaa', fontWeight: '600' }}>Deal Alert</span>
@@ -199,50 +289,45 @@ export default function Home() {
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '20px', padding: '16px 24px', maxWidth: '1400px', margin: '0 auto' }}>
-
-        {/* Main content */}
+      <div className="dealapp-layout">
         <div style={{ flex: 1, minWidth: 0 }}>
 
-          {/* Hero + Flash Sale gộp */}
-          <div style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)', borderRadius: '20px', padding: '28px', marginBottom: '20px', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '20px' }}>
+          <div style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)', borderRadius: '20px', padding: '28px', marginBottom: '20px', position: 'relative', overflow: 'hidden' }}>
             <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '180px', height: '180px', backgroundColor: 'rgba(255,69,0,0.12)', borderRadius: '50%' }} />
             <div style={{ position: 'absolute', bottom: '-40px', right: '60px', width: '120px', height: '120px', backgroundColor: 'rgba(255,69,0,0.08)', borderRadius: '50%' }} />
-
-            {/* Bên trái — Slogan */}
-            <div style={{ position: 'relative', zIndex: 1, flex: 1 }}>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', backgroundColor: 'rgba(255,69,0,0.2)', border: '1px solid rgba(255,69,0,0.4)', borderRadius: '20px', padding: '4px 12px', marginBottom: '12px' }}>
-                <span style={{ fontSize: '12px' }}>🔥</span>
-                <span style={{ fontSize: '11px', fontWeight: '700', color: '#FF4500', letterSpacing: '0.5px' }}>DEAL APP — SĂN DEAL THÔNG MINH</span>
+            <div className="dealapp-hero">
+              <div style={{ position: 'relative', zIndex: 1, flex: 1 }}>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', backgroundColor: 'rgba(255,69,0,0.2)', border: '1px solid rgba(255,69,0,0.4)', borderRadius: '20px', padding: '4px 12px', marginBottom: '12px' }}>
+                  <span style={{ fontSize: '12px' }}>🔥</span>
+                  <span style={{ fontSize: '11px', fontWeight: '700', color: '#FF4500', letterSpacing: '0.5px' }}>DEAL APP — SĂN DEAL THÔNG MINH</span>
+                </div>
+                <div style={{ fontSize: '26px', fontWeight: '900', color: '#fff', lineHeight: '1.25', marginBottom: '8px' }}>
+                  Deal sốc —<br />
+                  <span style={{ color: '#FF4500' }}>Mua thần tốc!</span>
+                </div>
+                <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.55)', lineHeight: '1.6', marginBottom: '16px' }}>
+                  So sánh giá · Lịch sử giá · Cashback nhanh · Cộng đồng
+                </div>
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                  <a href="/alerts" style={{ backgroundColor: '#FF4500', color: '#fff', padding: '9px 18px', borderRadius: '20px', fontWeight: '700', fontSize: '13px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                    <span>🔔</span> Đặt Deal Alert
+                  </a>
+                  <a href="/community" style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: '#fff', padding: '9px 18px', borderRadius: '20px', fontWeight: '700', fontSize: '13px', textDecoration: 'none', border: '1px solid rgba(255,255,255,0.2)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                    <span>👥</span> Cộng đồng
+                  </a>
+                </div>
               </div>
-              <div style={{ fontSize: '26px', fontWeight: '900', color: '#fff', lineHeight: '1.25', marginBottom: '8px' }}>
-                Deal sốc —<br />
-                <span style={{ color: '#FF4500' }}>Mua thần tốc!</span>
-              </div>
-              <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.55)', lineHeight: '1.6', marginBottom: '16px' }}>
-                So sánh giá · Lịch sử giá · Cashback nhanh · Cộng đồng
-              </div>
-              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                <a href="/alerts" style={{ backgroundColor: '#FF4500', color: '#fff', padding: '9px 18px', borderRadius: '20px', fontWeight: '700', fontSize: '13px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                  <span>🔔</span> Đặt Deal Alert
-                </a>
-                <a href="/community" style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: '#fff', padding: '9px 18px', borderRadius: '20px', fontWeight: '700', fontSize: '13px', textDecoration: 'none', border: '1px solid rgba(255,255,255,0.2)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                  <span>👥</span> Cộng đồng
-                </a>
-              </div>
-            </div>
-
-            {/* Bên phải — Flash Sale countdown */}
-            <div style={{ position: 'relative', zIndex: 1, flexShrink: 0, backgroundColor: 'rgba(255,69,0,0.15)', border: '1px solid rgba(255,69,0,0.3)', borderRadius: '16px', padding: '16px 20px', textAlign: 'center' }}>
-              <div style={{ fontSize: '10px', color: '#FF4500', fontWeight: '800', letterSpacing: '1.5px', marginBottom: '6px' }}>⚡ FLASH SALE</div>
-              <div style={{ fontSize: '13px', fontWeight: '700', color: 'rgba(255,255,255,0.8)', marginBottom: '10px' }}>Deal sốc hôm nay</div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'center' }}>
-                {[countdown.h, countdown.m, countdown.s].map((t, i) => (
-                  <span key={i} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span style={{ backgroundColor: 'rgba(0,0,0,0.4)', color: '#fff', padding: '6px 10px', borderRadius: '8px', fontSize: '20px', fontWeight: '800', minWidth: '36px', display: 'inline-block', textAlign: 'center' }}>{t}</span>
-                    {i < 2 && <span style={{ color: 'rgba(255,255,255,0.5)', fontWeight: '700', fontSize: '18px' }}>:</span>}
-                  </span>
-                ))}
+              <div className="dealapp-flash-box" style={{ position: 'relative', zIndex: 1 }}>
+                <div style={{ fontSize: '10px', color: '#FF4500', fontWeight: '800', letterSpacing: '1.5px', marginBottom: '6px' }}>⚡ FLASH SALE</div>
+                <div style={{ fontSize: '13px', fontWeight: '700', color: 'rgba(255,255,255,0.8)', marginBottom: '10px' }}>Deal sốc hôm nay</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'center' }}>
+                  {[countdown.h, countdown.m, countdown.s].map((t, i) => (
+                    <span key={i} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <span style={{ backgroundColor: 'rgba(0,0,0,0.4)', color: '#fff', padding: '6px 10px', borderRadius: '8px', fontSize: '20px', fontWeight: '800', minWidth: '36px', display: 'inline-block', textAlign: 'center' }}>{t}</span>
+                      {i < 2 && <span style={{ color: 'rgba(255,255,255,0.5)', fontWeight: '700', fontSize: '18px' }}>:</span>}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -252,57 +337,54 @@ export default function Home() {
             <span style={{ fontSize: '13px', color: '#999' }}>{filtered.length} kết quả</span>
           </div>
 
-          {filtered.length === 0 && (
+          {filtered.length === 0 && !loading && (
             <div style={{ textAlign: 'center', padding: '60px 0', color: '#bbb' }}>
               <div style={{ fontSize: '40px', marginBottom: '8px' }}>🔍</div>
               <div style={{ fontSize: '14px' }}>Không tìm thấy sản phẩm</div>
             </div>
           )}
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '14px' }}>
-  {loading
-    ? Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)
-    : filtered.map((deal: any) => {
-    const ps = getPlatformColor(deal.products?.platform)
-    return (
-                <a key={deal.id} href={'/product/' + deal.product_id}
-                  style={{ backgroundColor: '#fff', borderRadius: '16px', border: '0.5px solid #e5e4e0', textDecoration: 'none', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
-                  onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.1)')}
-                  onMouseLeave={(e) => (e.currentTarget.style.boxShadow = 'none')}
-                >
-                  <div style={{ position: 'relative', backgroundColor: '#f7f6f2', aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '52px' }}>
-                    {deal.products?.image_url
-                      ? <img src={deal.products.image_url} alt={deal.products?.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      : getEmoji(deal.products?.name)
-                    }
-                    <div style={{ position: 'absolute', top: '8px', right: '8px', backgroundColor: '#FF4500', color: '#fff', fontSize: '11px', padding: '3px 8px', borderRadius: '8px', fontWeight: '800' }}>
-                      -{deal.discount_percent}%
-                    </div>
-                  </div>
-                  <div style={{ padding: '10px 12px 14px' }}>
-                    <span style={{ fontSize: '10px', fontWeight: '700', color: ps.color, backgroundColor: ps.bg, padding: '2px 7px', borderRadius: '4px', display: 'inline-block', marginBottom: '6px' }}>
-                      {deal.products?.platform}
-                    </span>
-                    <div style={{ fontSize: '13px', fontWeight: '600', color: '#111', marginBottom: '8px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: '1.4' }}>
-                      {deal.products?.name}
-                    </div>
-                    <div style={{ fontSize: '15px', fontWeight: '800', color: '#FF4500' }}>
-                      {deal.current_price?.toLocaleString('vi-VN')}đ
-                    </div>
-                    <div style={{ fontSize: '12px', color: '#bbb', textDecoration: 'line-through' }}>
-                      {deal.original_price?.toLocaleString('vi-VN')}đ
-                    </div>
-                  </div>
-                </a>
-              )
-            })}
+          <div className="dealapp-grid">
+            {loading
+              ? Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)
+              : filtered.map((deal: any) => {
+                  const ps = getPlatformColor(deal.products?.platform)
+                  return (
+                    <a key={deal.id} href={'/product/' + deal.product_id}
+                      style={{ backgroundColor: '#fff', borderRadius: '16px', border: '0.5px solid #e5e4e0', textDecoration: 'none', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
+                      onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.1)')}
+                      onMouseLeave={(e) => (e.currentTarget.style.boxShadow = 'none')}
+                    >
+                      <div style={{ position: 'relative', backgroundColor: '#f7f6f2', aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '52px' }}>
+                        {deal.products?.image_url
+                          ? <img src={deal.products.image_url} alt={deal.products?.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} />
+                          : getEmoji(deal.products?.name)
+                        }
+                        <div style={{ position: 'absolute', top: '8px', right: '8px', backgroundColor: '#FF4500', color: '#fff', fontSize: '11px', padding: '3px 8px', borderRadius: '8px', fontWeight: '800' }}>
+                          -{deal.discount_percent}%
+                        </div>
+                      </div>
+                      <div style={{ padding: '10px 12px 14px' }}>
+                        <span style={{ fontSize: '10px', fontWeight: '700', color: ps.color, backgroundColor: ps.bg, padding: '2px 7px', borderRadius: '4px', display: 'inline-block', marginBottom: '6px' }}>
+                          {deal.products?.platform}
+                        </span>
+                        <div style={{ fontSize: '13px', fontWeight: '600', color: '#111', marginBottom: '8px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: '1.4' }}>
+                          {deal.products?.name}
+                        </div>
+                        <div style={{ fontSize: '15px', fontWeight: '800', color: '#FF4500' }}>
+                          {deal.current_price?.toLocaleString('vi-VN')}đ
+                        </div>
+                        <div style={{ fontSize: '12px', color: '#bbb', textDecoration: 'line-through' }}>
+                          {deal.original_price?.toLocaleString('vi-VN')}đ
+                        </div>
+                      </div>
+                    </a>
+                  )
+                })}
           </div>
         </div>
 
-        {/* Sidebar */}
-        <div style={{ width: '300px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
-
-          {/* Deal phổ biến */}
+        <div className="dealapp-sidebar">
           <div style={{ backgroundColor: '#fff', borderRadius: '16px', border: '0.5px solid #e5e4e0', overflow: 'hidden', position: 'sticky', top: '120px' }}>
             <div style={{ padding: '12px 16px', borderBottom: '1px solid #f0f0f0', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{ fontSize: '16px' }}>🔥</span>
@@ -334,30 +416,12 @@ export default function Home() {
             </a>
           </div>
 
-          {/* Deal đang trending */}
           <div style={{ backgroundColor: '#fff', borderRadius: '16px', border: '0.5px solid #e5e4e0', overflow: 'hidden' }}>
             <div style={{ padding: '12px 16px', borderBottom: '1px solid #f0f0f0', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{ fontSize: '16px' }}>📈</span>
               <span style={{ fontSize: '14px', fontWeight: '700', color: '#111' }}>Đang trending</span>
             </div>
-            {trendingDeals.length === 0 ? topDeals.slice(0, 3).map((deal: any, i: number) => {
-              const ps = getPlatformColor(deal.products?.platform)
-              return (
-                <a key={deal.id} href={'/product/' + deal.product_id}
-                  style={{ display: 'flex', gap: '10px', padding: '10px 16px', borderBottom: '0.5px solid #f7f6f2', textDecoration: 'none', alignItems: 'flex-start' }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#fafafa')}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-                >
-                  <span style={{ fontSize: '16px' }}>{['🥇', '🥈', '🥉'][i]}</span>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: '12px', fontWeight: '600', color: '#111', marginBottom: '3px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: '1.4' }}>
-                      {deal.products?.name}
-                    </div>
-                    <span style={{ fontSize: '10px', fontWeight: '700', color: ps.color, backgroundColor: ps.bg, padding: '1px 5px', borderRadius: '3px' }}>-{deal.discount_percent}%</span>
-                  </div>
-                </a>
-              )
-            }) : trendingDeals.map((deal: any, i: number) => {
+            {(trendingDeals.length === 0 ? topDeals.slice(0, 3) : trendingDeals).map((deal: any, i: number) => {
               const ps = getPlatformColor(deal.products?.platform)
               return (
                 <a key={deal.id} href={'/product/' + deal.product_id}
@@ -373,12 +437,10 @@ export default function Home() {
                     <span style={{ fontSize: '10px', fontWeight: '700', color: ps.color, backgroundColor: ps.bg, padding: '1px 5px', borderRadius: '3px' }}>-{deal.discount_percent}%</span>
                   </div>
                 </a>
-        )
-      })}
+              )
+            })}
+          </div>
 
-</div>
-
-          {/* Sàn TMĐT */}
           <div style={{ backgroundColor: '#fff', borderRadius: '16px', border: '0.5px solid #e5e4e0', overflow: 'hidden' }}>
             <div style={{ padding: '12px 16px', borderBottom: '1px solid #f0f0f0', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{ fontSize: '16px' }}>🛒</span>
@@ -397,13 +459,13 @@ export default function Home() {
               ))}
             </div>
           </div>
-
         </div>
       </div>
-    <footer style={{ backgroundColor: '#111', marginTop: '40px', padding: '24px' }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto', borderTop: '1px solid #222', paddingTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+
+      <footer style={{ backgroundColor: '#111', marginTop: '40px', padding: '24px' }}>
+        <div className="dealapp-footer-inner">
           <span style={{ fontSize: '12px', color: '#555' }}>© 2026 DealApp. All rights reserved.</span>
-          <div style={{ display: 'flex', gap: '16px' }}>
+          <div className="dealapp-footer-links">
             <a href="/privacy" style={{ fontSize: '12px', color: '#555', textDecoration: 'none' }}>Chính sách bảo mật</a>
             <a href="/terms" style={{ fontSize: '12px', color: '#555', textDecoration: 'none' }}>Điều khoản</a>
             <a href="https://facebook.com/dealapp" style={{ fontSize: '12px', color: '#555', textDecoration: 'none' }}>Facebook</a>
@@ -412,6 +474,6 @@ export default function Home() {
           <span style={{ fontSize: '12px', color: '#555' }}>dealapp.vn</span>
         </div>
       </footer>
-      </main>
+    </main>
   )
 }
